@@ -42,6 +42,7 @@ Set server hostname and configure for local discovery:
 3. Authenticate and connect your repositories:
    - figure-collector-backend
    - figure-collector-frontend
+   - page-scraper
 
 ## 5. Create Coolify Project
 
@@ -49,28 +50,57 @@ Set server hostname and configure for local discovery:
 2. Name it "FigureCollector"
 3. Click "Create"
 
-## 6. Add Backend Service
+## 6. Environment Configuration
+
+**IMPORTANT:** The application now uses environment variables for dev/prod deployment flexibility. 
+
+Create your environment configuration:
+
+1. Copy `.env.prod` (for production) or `.env.dev` (for development)
+2. Update required values:
+   - `MONGODB_URI`: Your MongoDB Atlas connection string
+   - `JWT_SECRET`: A secure random string
+   - `REGISTRY_URL`: Your Docker registry URL
+
+## 7. Add Scraper Service (Deploy First)
+
+1. Within your project, click "New Service"
+2. Select "Application" > "Docker Compose"
+3. Choose your page-scraper repository
+4. Configure environment variables from your .env file:
+   - `NODE_ENV`: ${ENVIRONMENT}
+   - `PORT`: ${SCRAPER_PORT}
+5. Set service name to match `SCRAPER_SERVICE_NAME` from your .env
+6. Click "Save" and "Deploy"
+
+## 8. Add Backend Service
 
 1. Within your project, click "New Service"
 2. Select "Application" > "Docker Compose"
 3. Choose your backend repository
-4. Configure environment variables:
-   - `NODE_ENV`: production
-   - `PORT`: 5000
-   - `MONGODB_URI`: your MongoDB Atlas connection string
-   - `JWT_SECRET`: a secure random string
-5. Click "Save" and "Deploy"
+4. Configure environment variables from your .env file:
+   - `NODE_ENV`: ${ENVIRONMENT}
+   - `PORT`: ${BACKEND_PORT}
+   - `MONGODB_URI`: ${MONGODB_URI}
+   - `JWT_SECRET`: ${JWT_SECRET}
+   - `SCRAPER_SERVICE_URL`: ${SCRAPER_SERVICE_URL}
+5. Set service name to match `BACKEND_SERVICE_NAME` from your .env
+6. Click "Save" and "Deploy"
 
-## 7. Add Frontend Service
+## 9. Add Frontend Service
 
 1. Within your project, click "New Service"
 2. Select "Application" > "Docker Compose"
 3. Choose your frontend repository
-4. Configure environment variables:
-   - `REACT_APP_API_URL`: /api (for local proxy) or https://api.yourdomain.com (for separate subdomain)
-5. Click "Save" and "Deploy"
+4. Configure environment variables from your .env file:
+   - `REACT_APP_API_URL`: /api (for local proxy)
+   - `BACKEND_HOST`: ${BACKEND_HOST}
+   - `BACKEND_PORT`: ${BACKEND_PORT}
+   - `FRONTEND_PORT`: ${FRONTEND_PORT}
+5. Set service name to match `FRONTEND_SERVICE_NAME` from your .env
+6. Click "Save" and "Deploy"
 
-## 8. Set Up Reverse Proxy
+## 10. Set Up Reverse Proxy
 
 If you're not using Cloudflare Tunnel:
 
@@ -79,18 +109,35 @@ If you're not using Cloudflare Tunnel:
 3. Add your domain (e.g., figures.yourdomain.com)
 4. Enable SSL with Let's Encrypt
 
-## 9. Deploy the Application
+## 11. Deploy the Application
 
-1. In your project dashboard, click "Deploy" for each service
+1. In your project dashboard, click "Deploy" for each service in order:
+   - First: Scraper Service
+   - Second: Backend Service (depends on scraper)
+   - Third: Frontend Service
 2. Monitor the deployment logs for any errors
 3. Once deployed, access your application at your configured domain
 
-## 10. Continuous Deployment
+## Alternative: Using deploy.sh Script
+
+For local deployments or development, you can use the provided deployment script:
+
+```bash
+# Deploy development environment
+./deploy.sh dev
+
+# Deploy production environment
+./deploy.sh prod
+```
+
+This script automatically loads the correct environment variables and deploys all services using docker-compose.
+
+## 11. Continuous Deployment
 
 1. In your service settings, enable "Auto Deploy" to automatically deploy when changes are pushed to the repository
 2. Configure webhook notifications if desired
 
-## 11. Monitoring and Maintenance
+## 12. Monitoring and Maintenance
 
 1. Use Coolify's built-in monitoring to track service health
 2. Use the logs viewer to troubleshoot issues
