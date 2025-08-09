@@ -4,11 +4,12 @@ A comprehensive microservices application for collecting, managing, and displayi
 
 ## 🏗️ Architecture
 
-The application consists of three main services:
+The application consists of four main services:
 
-- **Backend API** (`figure-collector-backend`) - Node.js/Express API with MongoDB
-- **Frontend Web App** (`figure-collector-frontend`) - React application with responsive UI
+- **Backend API** (`figure-collector-backend`) - Node.js/Express API with MongoDB, acts as orchestrator
+- **Frontend Web App** (`figure-collector-frontend`) - React application with responsive UI and self-registration
 - **Page Scraper** (`page-scraper`) - Dedicated web scraping service with browser automation
+- **Version Service** (`version-service`) - Centralized version management and validation service
 
 ## ✨ Features
 
@@ -31,6 +32,8 @@ The application consists of three main services:
 - Automatic JWT token refresh
 - Health checks and monitoring
 - nginx reverse proxy with configurable routing
+- Centralized version management and validation
+- Service self-registration architecture (eliminates circular dependencies)
 
 ## 🚀 Quick Start
 
@@ -81,16 +84,19 @@ docker-compose --env-file .env.dev up -d
 - Frontend: http://localhost:5061
 - Backend API: http://localhost:5060
 - Scraper Service: http://localhost:3010
+- Version Service: http://localhost:3011
 
 **Test:**
 - Frontend: http://localhost:5056
 - Backend API: http://localhost:5055
 - Scraper Service: http://localhost:3005
+- Version Service: http://localhost:3006
 
 **Production:**
 - Frontend: http://localhost:5051
 - Backend API: http://localhost:5050
 - Scraper Service: http://localhost:3000
+- Version Service: http://localhost:3001
 
 ## 🔧 Development
 
@@ -129,6 +135,7 @@ The application uses environment variables for flexible deployment:
 | `BACKEND_PORT` | 5060 | 5055 | 5050 | Backend API port |
 | `FRONTEND_PORT` | 5061 | 5056 | 5051 | Frontend port |
 | `SCRAPER_PORT` | 3010 | 3005 | 3000 | Scraper service port |
+| `VERSION_SERVICE_PORT` | 3011 | 3006 | 3001 | Version service port |
 | `*_SERVICE_NAME` | `*-dev` suffix | `*-test` suffix | No suffix | Service names for networking |
 
 See `.env.example` for complete configuration options.
@@ -194,13 +201,68 @@ const response = await fetch(`${scraperUrl}/scrape/mfc`, {...});
 - Independent versioning and releases
 - Can be used by multiple applications
 
+## 🏷️ Version Management
+
+The application implements a sophisticated version management system:
+
+### Architecture
+- **Version Service**: Centralized service that stores application version info and validates service combinations
+- **Backend Orchestrator**: Aggregates version info from all services and validates combinations
+- **Frontend Self-Registration**: Frontend registers its version with backend on startup (eliminates circular dependencies)
+- **Service Communication**: Backend fetches scraper version directly
+
+### Version Display
+- Version info displayed in footer with hover popup
+- Shows individual service versions with health status
+- Displays validation results (tested/compatible/warning/invalid)
+- Color-coded badges for quick status identification
+
+### API Endpoints
+**Version Service:**
+- `GET /app-version` - Get application version and metadata
+- `GET /validate-versions?backend=X&frontend=Y&scraper=Z` - Validate service combination
+
+**Backend:**
+- `POST /register-service` - Service registration endpoint (used by frontend)
+- `GET /version` - Aggregated version info with validation results
+
+### Service Registration Flow
+1. Frontend starts and registers with backend via `/register-service` (proxied by nginx)
+2. Backend fetches scraper version from scraper service
+3. Backend calls version-service to validate the combination
+4. Frontend displays comprehensive version info with validation status
+
+### API Architecture
+The application uses a hybrid routing approach with nginx upstream configuration:
+
+**Business Logic APIs** (via `/api` prefix)
+- Frontend: `/api/figures` → Backend: `/figures`
+- Frontend: `/api/users` → Backend: `/users`
+- Nginx strips `/api` prefix when proxying to backend via `upstream backend` block
+
+**Infrastructure APIs** (direct proxy)
+- Frontend: `/version` → Backend: `/version`
+- Frontend: `/register-service` → Backend: `/register-service`
+- No prefix stripping, direct 1:1 mapping via `upstream backend` block
+
+### Nginx Proxy Configuration
+The frontend uses an nginx `upstream` block for reliable backend connectivity:
+```nginx
+upstream backend {
+    server ${BACKEND_HOST}:${BACKEND_PORT};
+}
+```
+
+This approach ensures stable service-to-service communication and avoids DNS resolution issues that can occur in containerized environments.
+
 ## 📁 Repository Structure
 
 This infrastructure repository contains deployment configuration. The services are in separate repositories:
 
-- `figure-collector-backend` - Express.js API server
-- `figure-collector-frontend` - React web application  
+- `figure-collector-backend` - Express.js API server and orchestrator
+- `figure-collector-frontend` - React web application with self-registration
 - `page-scraper` - Web scraping microservice
+- `version-service` - Version management and validation service
 - `figure-collector-infra` - **This repository** - Deployment configuration
 
 ## 🔐 Security Features
@@ -226,14 +288,24 @@ This infrastructure repository contains deployment configuration. The services a
 - `PUT /api/figures/:id` - Update figure
 - `DELETE /api/figures/:id` - Delete figure
 
+### Version Management (Infrastructure APIs)
+- `POST /register-service` - Service registration (used by frontend)
+- `GET /version` - Get aggregated version info with validation
+
 ### Scraping (Backend Proxy)
 - `POST /api/figures/scrape-mfc` - Scrape MFC URL via backend
 
 ### Page Scraper Service (Direct API)
 - `GET /health` - Health check endpoint
+- `GET /version` - Get scraper version info
 - `GET /configs` - Get available site configurations
 - `POST /scrape/mfc` - MFC scraping with pre-built config
 - `POST /scrape` - Generic scraping with custom selectors
+
+### Version Service (Direct API)
+- `GET /health` - Health check endpoint
+- `GET /app-version` - Get application version and metadata
+- `GET /validate-versions` - Validate service version combinations
 
 #### Example Scraper Usage:
 ```bash
@@ -295,12 +367,20 @@ docker-compose logs -f [service-name]
 
 Verify service health:
 ```bash
-curl http://localhost:5060/health  # Backend (dev)
-curl http://localhost:3010/health  # Scraper (dev)
-curl http://localhost:5055/health  # Backend (test)
-curl http://localhost:3005/health  # Scraper (test)
-curl http://localhost:5050/health  # Backend (prod)
-curl http://localhost:3000/health  # Scraper (prod)
+# Development environment
+curl http://localhost:5060/health  # Backend
+curl http://localhost:3010/health  # Scraper
+curl http://localhost:3011/health  # Version Service
+
+# Test environment  
+curl http://localhost:5055/health  # Backend
+curl http://localhost:3005/health  # Scraper
+curl http://localhost:3006/health  # Version Service
+
+# Production environment
+curl http://localhost:5050/health  # Backend
+curl http://localhost:3000/health  # Scraper
+curl http://localhost:3001/health  # Version Service
 ```
 
 ## 🤝 Contributing

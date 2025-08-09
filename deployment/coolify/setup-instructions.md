@@ -53,7 +53,7 @@ Set server hostname and configure for local discovery:
 
 ## 6. Environment Configuration
 
-**IMPORTANT:** The application now uses environment variables for dev/prod deployment flexibility. 
+**IMPORTANT:** The application now uses environment variables for dev/prod deployment flexibility. The frontend uses nginx with an upstream backend configuration for reliable service communication.
 
 Create your environment configuration:
 
@@ -108,9 +108,10 @@ Create your environment configuration:
 3. Choose your frontend repository
 4. Configure environment variables from your .env file:
    - `REACT_APP_API_URL`: /api (for local proxy)
-   - `BACKEND_HOST`: ${BACKEND_HOST}
-   - `BACKEND_PORT`: ${BACKEND_PORT}
-   - `FRONTEND_PORT`: ${FRONTEND_PORT}
+   - `BACKEND_HOST`: ${BACKEND_HOST} (used in nginx upstream block)
+   - `BACKEND_PORT`: ${BACKEND_PORT} (used in nginx upstream block)
+   - `FRONTEND_HOST`: ${FRONTEND_HOST} (for nginx configuration)
+   - `FRONTEND_PORT`: ${FRONTEND_PORT} (nginx listening port)
 5. Set service name to match `FRONTEND_SERVICE_NAME` from your .env
 6. Click "Save" and "Deploy"
 
