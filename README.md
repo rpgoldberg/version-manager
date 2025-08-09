@@ -80,11 +80,16 @@ docker-compose --env-file .env.dev up -d
 **Development:**
 - Frontend: http://localhost:5061
 - Backend API: http://localhost:5060
-- Scraper Service: http://localhost:3000
+- Scraper Service: http://localhost:3010
+
+**Test:**
+- Frontend: http://localhost:5056
+- Backend API: http://localhost:5055
+- Scraper Service: http://localhost:3005
 
 **Production:**
-- Frontend: http://localhost:80
-- Backend API: http://localhost:5000
+- Frontend: http://localhost:5051
+- Backend API: http://localhost:5050
 - Scraper Service: http://localhost:3000
 
 ## 🔧 Development
@@ -119,12 +124,12 @@ docker-compose --env-file .env.dev up -d
 
 The application uses environment variables for flexible deployment:
 
-| Variable | Development | Production | Description |
-|----------|-------------|------------|-------------|
-| `BACKEND_PORT` | 5060 | 5000 | Backend API port |
-| `FRONTEND_PORT` | 5061 | 80 | Frontend port |
-| `SCRAPER_PORT` | 3000 | 3000 | Scraper service port |
-| `*_SERVICE_NAME` | `*-dev` suffix | No suffix | Service names for networking |
+| Variable | Development | Test | Production | Description |
+|----------|-------------|------|------------|-------------|
+| `BACKEND_PORT` | 5060 | 5055 | 5050 | Backend API port |
+| `FRONTEND_PORT` | 5061 | 5056 | 5051 | Frontend port |
+| `SCRAPER_PORT` | 3010 | 3005 | 3000 | Scraper service port |
+| `*_SERVICE_NAME` | `*-dev` suffix | `*-test` suffix | No suffix | Service names for networking |
 
 See `.env.example` for complete configuration options.
 
@@ -148,6 +153,12 @@ The scraper automatically extracts:
 
 2. **Programmatic API:**
    ```bash
+   # Development
+   curl -X POST http://localhost:3010/scrape/mfc \
+     -H "Content-Type: application/json" \
+     -d '{"url": "https://myfigurecollection.net/item/123456"}'
+     
+   # Production  
    curl -X POST http://localhost:3000/scrape/mfc \
      -H "Content-Type: application/json" \
      -d '{"url": "https://myfigurecollection.net/item/123456"}'
@@ -160,6 +171,28 @@ Currently supports MFC with plans for:
 - HobbyLink Japan
 - BigBadToyStore
 - Other figure retailers
+
+### Page Scraper Technical Details
+
+**Standalone Service Features:**
+- **Browser Pool**: Pre-launched Chromium browsers (3-5 second response time)
+- **Cloudflare Bypass**: Real browser automation defeats anti-bot protection
+- **Generic Engine**: Configurable CSS selectors for any site
+- **Error Recovery**: Handles timeouts, challenges, and extraction failures
+- **Independent Scaling**: Completely decoupled from main application
+
+**Service Communication:**
+```javascript
+// Backend calls scraper via environment variable
+const scraperUrl = process.env.SCRAPER_SERVICE_URL; // http://page-scraper-dev:3010
+const response = await fetch(`${scraperUrl}/scrape/mfc`, {...});
+```
+
+**Deployment Isolation:**
+- Separate Docker container with browser dependencies
+- Own health checks and monitoring  
+- Independent versioning and releases
+- Can be used by multiple applications
 
 ## 📁 Repository Structure
 
@@ -193,9 +226,34 @@ This infrastructure repository contains deployment configuration. The services a
 - `PUT /api/figures/:id` - Update figure
 - `DELETE /api/figures/:id` - Delete figure
 
-### Scraping
-- `POST /api/figures/scrape-mfc` - Scrape MFC URL
-- `POST /scraper/scrape/mfc` - Direct scraper API
+### Scraping (Backend Proxy)
+- `POST /api/figures/scrape-mfc` - Scrape MFC URL via backend
+
+### Page Scraper Service (Direct API)
+- `GET /health` - Health check endpoint
+- `GET /configs` - Get available site configurations
+- `POST /scrape/mfc` - MFC scraping with pre-built config
+- `POST /scrape` - Generic scraping with custom selectors
+
+#### Example Scraper Usage:
+```bash
+# MFC scraping
+curl -X POST http://localhost:3000/scrape/mfc \
+  -H "Content-Type: application/json" \
+  -d '{"url": "https://myfigurecollection.net/item/123456"}'
+
+# Generic scraping  
+curl -X POST http://localhost:3000/scrape \
+  -H "Content-Type: application/json" \
+  -d '{
+    "url": "https://example.com/item/123",
+    "config": {
+      "imageSelector": ".product-image img",
+      "manufacturerSelector": ".brand-name",
+      "nameSelector": ".product-title"
+    }
+  }'
+```
 
 ## 🚀 Deployment Options
 
@@ -237,8 +295,12 @@ docker-compose logs -f [service-name]
 
 Verify service health:
 ```bash
-curl http://localhost:5060/health  # Backend
-curl http://localhost:3000/health  # Scraper
+curl http://localhost:5060/health  # Backend (dev)
+curl http://localhost:3010/health  # Scraper (dev)
+curl http://localhost:5055/health  # Backend (test)
+curl http://localhost:3005/health  # Scraper (test)
+curl http://localhost:5050/health  # Backend (prod)
+curl http://localhost:3000/health  # Scraper (prod)
 ```
 
 ## 🤝 Contributing

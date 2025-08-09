@@ -7,7 +7,9 @@ credentials-file: ~/.cloudflared/YOUR_TUNNEL_ID.json
 
 ingress:
   - hostname: figures.yourdomain.com
-    service: http://figure-server:80
+    service: http://figure-server:5051
   - hostname: api.figures.yourdomain.com
-    service: http://figure-server:5000
+    service: http://figure-server:5050
+  - hostname: scraper.figures.yourdomain.com
+    service: http://figure-server:3000
   - service: http_status:404

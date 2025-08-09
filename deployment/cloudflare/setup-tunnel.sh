@@ -25,9 +25,11 @@ credentials-file: ~/.cloudflared/$TUNNEL_ID.json
 
 ingress:
   - hostname: figures.yourdomain.com
-    service: http://figure-server:80
+    service: http://figure-server:5051
   - hostname: api.figures.yourdomain.com
-    service: http://figure-server:5000
+    service: http://figure-server:5050
+  - hostname: scraper.figures.yourdomain.com
+    service: http://figure-server:3000
   - service: http_status:404
 EOL
 
@@ -38,6 +40,7 @@ echo "IMPORTANT: Replace 'yourdomain.com' with your actual domain in the config 
 echo "To route DNS (after updating the domain in the config):"
 echo "cloudflared tunnel route dns figure-collector figures.yourdomain.com"
 echo "cloudflared tunnel route dns figure-collector api.figures.yourdomain.com"
+echo "cloudflared tunnel route dns figure-collector scraper.figures.yourdomain.com"
 
 # Step 6: Add monitoring scripts
 echo "Creating network monitoring script..."
