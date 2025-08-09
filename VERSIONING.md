@@ -38,7 +38,7 @@ The version manager automatically handles new services:
 
 ```bash
 # If service doesn't exist in version.json, it's auto-created with v1.0.0
-./scripts/version-manager-v2.sh bump my-new-service minor
+./scripts/version-manager.sh bump my-new-service minor
 # Output: Service 'my-new-service' not found, will initialize with v1.0.0
 # Result: my-new-service v1.0.0 → v1.1.0
 ```
@@ -54,23 +54,23 @@ The version manager automatically handles new services:
 
 ```bash
 # Show current versions
-./scripts/version-manager-v2.sh show
+./scripts/version-manager.sh show
 
 # Bump specific service (independent versioning)
-./scripts/version-manager-v2.sh bump backend patch
-./scripts/version-manager-v2.sh bump frontend minor
+./scripts/version-manager.sh bump backend patch
+./scripts/version-manager.sh bump frontend minor
 
 # Bump new service (auto-creates with v1.0.0 default)
-./scripts/version-manager-v2.sh bump new-service minor
+./scripts/version-manager.sh bump new-service minor
 
 # Create application release (coordinates current service versions)
-./scripts/version-manager-v2.sh app-release 1.1.0
+./scripts/version-manager.sh app-release 1.1.0
 
 # Sync environment files with current versions
-./scripts/version-manager-v2.sh sync
+./scripts/version-manager.sh sync
 
 # Check version compatibility
-./scripts/version-manager-v2.sh check
+./scripts/version-manager.sh check
 ```
 
 ### Release Process
@@ -83,7 +83,7 @@ The version manager automatically handles new services:
 #### 2. Pre-Release Phase
 ```bash
 # Prepare release candidate
-./scripts/version-manager-v2.sh app-release 1.1.0-rc1
+./scripts/version-manager.sh app-release 1.1.0-rc1
 
 # Test in staging environment
 ./deploy.sh test
@@ -92,7 +92,7 @@ The version manager automatically handles new services:
 #### 3. Release Phase
 ```bash
 # Final release preparation
-./scripts/version-manager-v2.sh app-release 1.1.0
+./scripts/version-manager.sh app-release 1.1.0
 
 # Review changes
 git diff
@@ -213,11 +213,11 @@ Accept: application/vnd.figure-collector.v1+json
 ### Version Conflicts
 ```bash
 # Check current versions and compatibility
-./scripts/version-manager-v2.sh show
-./scripts/version-manager-v2.sh check
+./scripts/version-manager.sh show
+./scripts/version-manager.sh check
 
 # Sync environment files
-./scripts/version-manager-v2.sh sync
+./scripts/version-manager.sh sync
 
 # Reset to known good state
 git checkout v1.0.0
@@ -226,18 +226,18 @@ git checkout v1.0.0
 ### Adding New Services
 ```bash
 # New services auto-initialize with v1.0.0
-./scripts/version-manager-v2.sh bump new-service patch
+./scripts/version-manager.sh bump new-service patch
 # Creates: new-service v1.0.0 → v1.0.1
 
 # Manually add to existing application release
-./scripts/version-manager-v2.sh app-release 1.2.0
+./scripts/version-manager.sh app-release 1.2.0
 ```
 
 ### Missing Version Data
 If `version.json` is corrupted or missing service data:
 ```bash
 # Services default to v1.0.0 automatically
-./scripts/version-manager-v2.sh bump missing-service minor
+./scripts/version-manager.sh bump missing-service minor
 # Auto-creates with proper structure
 ```
 

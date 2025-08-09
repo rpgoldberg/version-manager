@@ -47,7 +47,7 @@ git checkout develop
 git pull origin develop  # Gets the merged changes
 
 # NOW bump the version on develop branch
-./scripts/version-manager-v2.sh bump backend minor  # 1.0.0 → 1.1.0
+./scripts/version-manager.sh bump backend minor  # 1.0.0 → 1.1.0
 
 # Commit the version bump
 git add .
@@ -63,7 +63,7 @@ git checkout develop
 git pull origin develop
 
 # Create application release with current service versions
-./scripts/version-manager-v2.sh app-release 1.2.0  # App v1.2.0 with backend v1.1.0
+./scripts/version-manager.sh app-release 1.2.0  # App v1.2.0 with backend v1.1.0
 
 git add .
 git commit -m "Application release v1.2.0"
@@ -120,37 +120,37 @@ git checkout -b hotfix/security-patch
 ### Show Current Versions
 ```bash
 cd figure-collector-infra
-./scripts/version-manager-v2.sh show
+./scripts/version-manager.sh show
 ```
 
 ### Bump Individual Service Version
 ```bash
 # Patch version (bug fixes)
-./scripts/version-manager-v2.sh bump backend patch
+./scripts/version-manager.sh bump backend patch
 
 # Minor version (new features)
-./scripts/version-manager-v2.sh bump backend minor
+./scripts/version-manager.sh bump backend minor
 
 # Major version (breaking changes)
-./scripts/version-manager-v2.sh bump backend major
+./scripts/version-manager.sh bump backend major
 ```
 
 ### Create Application Release
 ```bash
 # Captures current versions of all services
-./scripts/version-manager-v2.sh app-release 1.2.0
+./scripts/version-manager.sh app-release 1.2.0
 ```
 
 ### Sync Environment Files
 ```bash
 # Update .env files with current service versions
-./scripts/version-manager-v2.sh sync
+./scripts/version-manager.sh sync
 ```
 
 ### Check Version Compatibility
 ```bash
 # Check if current service combination has been tested
-./scripts/version-manager-v2.sh check
+./scripts/version-manager.sh check
 ```
 
 ## Multi-Service Coordination
@@ -168,7 +168,7 @@ cd figure-collector-frontend
 
 # 3. Application release coordinates them
 cd figure-collector-infra
-./scripts/version-manager-v2.sh app-release 1.2.0
+./scripts/version-manager.sh app-release 1.2.0
 # Captures: backend v1.1.0, frontend v1.0.1, scraper v1.0.0
 ```
 
@@ -240,7 +240,7 @@ SCRAPER_TAG=v1.0.0
 cd page-scraper
 git checkout develop
 # ... make changes ...
-./scripts/version-manager-v2.sh bump scraper minor  # Independent versioning
+./scripts/version-manager.sh bump scraper minor  # Independent versioning
 git tag v1.2.0  # Independent of other services
 git push origin develop --tags
 ```
@@ -274,23 +274,23 @@ git checkout v1.1.0  # Previous app version
 ### Check Current State
 ```bash
 # Show all versions
-./scripts/version-manager-v2.sh show
+./scripts/version-manager.sh show
 
 # Check what would be deployed
-./scripts/version-manager-v2.sh check
+./scripts/version-manager.sh check
 
 # Sync environment files if needed
-./scripts/version-manager-v2.sh sync
+./scripts/version-manager.sh sync
 ```
 
 ### Fix Version Conflicts
 ```bash
 # Reset to known good state
 git checkout v1.0.0
-./scripts/version-manager-v2.sh sync
+./scripts/version-manager.sh sync
 
 # Or fix specific service version
-./scripts/version-manager-v2.sh bump backend patch
+./scripts/version-manager.sh bump backend patch
 ```
 
 ## Best Practices Checklist

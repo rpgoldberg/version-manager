@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Figure Collector Services Version Manager v2
+# Figure Collector Services Version Manager
 # Independent service versioning with dependency management
 
 set -e
@@ -18,7 +18,7 @@ CYAN='\033[0;36m'
 NC='\033[0m' # No Color
 
 usage() {
-    echo -e "${BLUE}Figure Collector Services Version Manager v2${NC}"
+    echo -e "${BLUE}Figure Collector Services Version Manager${NC}"
     echo -e "${CYAN}Independent Service Versioning${NC}"
     echo ""
     echo "Usage: $0 <command> [options]"
