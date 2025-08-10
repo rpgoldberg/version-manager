@@ -2,7 +2,7 @@
   "application": {
     "name": "figure-collector-services",
     "version": "1.0.0",
-    "releaseDate": "08-Aug-2025",
+    "releaseDate": "09-Aug-2025",
     "description": "Figure collection management application"
   },
   "services": {
@@ -10,23 +10,27 @@
       "name": "figure-collector-backend",
       "version": "1.0.0",
       "repository": "figure-collector-backend",
-      "dockerImage": "figure-collector-backend:v1.0.0",
+      "dockerImage": "backend:v1.0.0",
       "ownedBy": "figure-collector",
-      "coupledWith": ["frontend"]
+      "coupledWith": [
+        "frontend"
+      ]
     },
     "frontend": {
-      "name": "figure-collector-frontend", 
+      "name": "figure-collector-frontend",
       "version": "1.0.0",
       "repository": "figure-collector-frontend",
-      "dockerImage": "figure-collector-frontend:v1.0.0",
+      "dockerImage": "frontend:v1.0.0",
       "ownedBy": "figure-collector",
-      "coupledWith": ["backend"]
+      "coupledWith": [
+        "backend"
+      ]
     },
     "scraper": {
       "name": "page-scraper",
-      "version": "1.0.0", 
+      "version": "1.0.0",
       "repository": "page-scraper",
-      "dockerImage": "page-scraper:v1.0.0",
+      "dockerImage": "scraper:v1.0.0",
       "ownedBy": "platform",
       "coupledWith": [],
       "standalone": true,
@@ -36,7 +40,8 @@
       "name": "figure-collector-infra",
       "version": "1.0.0",
       "repository": "figure-collector-infra",
-      "ownedBy": "figure-collector"
+      "ownedBy": "figure-collector",
+      "dockerImage": "infrastructure:v1.0.0"
     }
   },
   "dependencies": {
@@ -53,7 +58,7 @@
         "backend": "1.0.0",
         "frontend": "1.0.0",
         "scraper": "1.0.0",
-        "verified": "08-Aug-2025"
+        "verified": "09-Aug-2025"
       }
     ]
   }
