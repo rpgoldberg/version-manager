@@ -1,6 +1,6 @@
 const { createApp, loadVersionData } = require('./app');
 
-const PORT = process.env.PORT || 3020;
+const PORT = process.env.PORT;
 
 // Load version data
 const versionData = loadVersionData();
