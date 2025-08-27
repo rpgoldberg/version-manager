@@ -1,6 +1,6 @@
 # Version Service
 
-Centralized version management and validation service for the Figure Collector application. Provides application version information and validates service version combinations. Features comprehensive test coverage with 55 test cases.
+Centralized version management and validation service for the Figure Collector application. Provides application version information and validates service version combinations. Features comprehensive test coverage with 120 test cases.
 
 ## Features
 
@@ -8,12 +8,13 @@ Centralized version management and validation service for the Figure Collector a
 - **Service Combination Validation**: Validates that service versions are tested/compatible together
 - **Lightweight Architecture**: Minimal Node.js service with JSON-based configuration
 - **Health Monitoring**: Built-in health check endpoint
-- **Comprehensive Testing**: 55 test cases with Jest and Supertest
+- **Comprehensive Testing**: 120 test cases with Jest and Supertest
+- **Enhanced Version Compatibility**: Detailed compatibility checking across services
 
 ## API Endpoints
 
-### GET /health
-Health check endpoint for monitoring.
+### GET /
+Health check endpoint serving as root and basic health monitor.
 
 **Response:**
 ```json
@@ -24,18 +25,40 @@ Health check endpoint for monitoring.
 }
 ```
 
+### GET /health
+Detailed health check endpoint with service status.
+
+**Response:**
+```json
+{
+  "status": "healthy", 
+  "service": "version-service",
+  "timestamp": "2025-08-09T00:00:00.000Z",
+  "versionData": "loaded"
+}
+```
+
 ### GET /app-version
 Get application version information.
 
 **Response:**
 ```json
 {
-  "name": "Figure Collector Services",
+  "name": "figure-collector-version-service",
   "version": "1.0.0",
-  "releaseDate": "2025-08-08",
-  "description": "Comprehensive figure collection management platform"
+  "releaseDate": "19-Aug-2024",
+  "description": "Lightweight version management service for Figure Collector"
 }
 ```
+
+### GET /version-info
+Comprehensive version data retrieval.
+
+**Response Fields:**
+- `application`: App metadata
+- `services`: Registered service versions
+- `dependencies`: Service dependencies
+- `compatibility`: Version compatibility information
 
 ### GET /validate-versions
 Validate service version combinations.
@@ -45,69 +68,54 @@ Validate service version combinations.
 - `frontend` - Frontend service version  
 - `scraper` - Scraper service version
 
-**Example:**
+**Possible Statuses:**
+- `tested` - Exact combination validated
+- `compatible` - Likely to work together
+- `warning` - Potential compatibility issues
+- `invalid` - Known incompatible combination
+
+**Example Validation Request:**
 ```bash
-curl "http://localhost:3001/validate-versions?backend=1.0.0&frontend=0.1.0&scraper=1.0.0"
+curl "http://localhost:3001/validate-versions?backend=1.0.0&frontend=1.0.0&scraper=1.0.0"
 ```
 
-**Response:**
+**Response Example:**
 ```json
 {
   "valid": true,
-  "status": "tested",
-  "message": "All service versions have been tested together",
-  "combination": {
-    "backend": "1.0.0",
-    "frontend": "0.1.0", 
-    "scraper": "1.0.0"
-  }
+  "status": "tested", 
+  "verified": "19-Aug-2024",
+  "message": "This service combination has been tested and verified"
 }
 ```
 
-**Validation Statuses:**
-- `tested` - This exact combination has been validated
-- `compatible` - Versions should work together based on compatibility rules
-- `warning` - May work but not explicitly tested
-- `invalid` - Known incompatible combination
+## Version Compatibility Strategy
 
-### Recent Validation Improvements
+### Semver-based Validation
+- Major version differences require explicit testing
+- Minor and patch version differences allowed with warnings
+- Pre-release and build metadata intelligently handled
 
-**Semver-based Validation Enhancements:**
-- Enhanced version compatibility checking algorithm
-- Improved semver parsing and validation
-- Stricter rules for major version compatibility
-- Better handling of pre-release and build metadata
-
-**Compatibility Validation Example:**
-```typescript
-// New semver validation strategy
-function validateVersionCompatibility(versions: ServiceVersions): ValidationResult {
-  const semverRules = {
-    majorVersionMustMatch: true,
-    allowMinorVersionDiff: true,
-    allowPatchVersionDiff: true
-  };
-
-  return validateCombination(versions, semverRules);
-}
-```
+### Compatibility Validation Rules
+- Exact tested combinations preferred
+- Compatible versions with minimal conflict tolerance
+- Detailed warning system for potential mismatches
 
 ## Configuration
 
-The service reads from `version.json` for version data and validation rules:
+The service uses `version.json` for configuration:
 
 ```json
 {
   "application": {
     "name": "Figure Collector Services",
     "version": "1.0.0",
-    "releaseDate": "2025-08-08",
-    "description": "Comprehensive figure collection management platform"
+    "releaseDate": "19-Aug-2024"
   },
   "validCombinations": [
     {
       "backend": "1.0.0",
-      "frontend": "0.1.0",
+      "frontend": "1.0.0", 
       "scraper": "1.0.0",
       "status": "tested"
     }
@@ -115,98 +123,23 @@ The service reads from `version.json` for version data and validation rules:
 }
 ```
 
-## 🧪 Testing
+## Testing
 
-The version service includes comprehensive test coverage with 64 test cases across 6 test suites, ensuring robust validation and reliability.
-
-### Test Coverage Overview
-
+### Coverage
 - **Total Test Suites**: 6
-- **Total Tests**: 64
-- **Test Coverage**: >95%
-- **Testing Framework**: Jest + Supertest
-- **Architecture**: Comprehensive integration and unit testing with real HTTP requests
-
-### Test Configuration for NVM and WSL
-
-**Prerequisites**:
-- Node Version Manager (NVM)
-- Node.js 18.16.1+ recommended
-- NPM 9.5.1+
-
-**Recommended Configuration**:
-```json
-{
-  "engines": {
-    "node": ">=18.16.1",
-    "npm": ">=9.5.1"
-  },
-  "scripts": {
-    "test": "NODE_OPTIONS=--experimental-vm-modules jest",
-    "test:coverage": "npm test -- --coverage",
-    "test:watch": "npm test -- --watch"
-  },
-  "jest": {
-    "testEnvironment": "node",
-    "collectCoverageFrom": [
-      "**/*.{js,ts}",
-      "!**/node_modules/**",
-      "!**/tests/**",
-      "!**/coverage/**"
-    ],
-    "coverageDirectory": "coverage",
-    "coverageReporters": ["text", "lcov", "html"],
-    "verbose": true,
-    "testTimeout": 10000
-  }
-}
-
-### Test Structure
-
-```
-tests/
-├── app.test.js              # Main application tests
-├── health.test.js           # Health check endpoint tests
-├── app-version.test.js      # Application version endpoint tests
-├── validate-versions.test.js # Version validation tests
-└── error-handling.test.js   # Error scenarios and edge cases
-```
+- **Total Tests**: 120
+- **Test Coverage**: 94.88%
+- **Framework**: Jest + Supertest
 
 ### Test Categories
-
-**Application Tests:**
-- Server startup and configuration
-- Express app initialization
-- Middleware setup and CORS configuration
-- Port configuration across environments
-
-**Health Check Tests:**
-- Basic health endpoint functionality
-- Response format validation
-- Timestamp accuracy
-- Service identification
-
-**Version Management Tests:**
-- Application version information retrieval
-- Version data structure validation
-- Configuration file reading
-- Metadata accuracy
-
-**Version Validation Tests:**
-- Valid service combination testing
-- Invalid combination handling
-- Missing parameter scenarios
-- Compatibility status determination
-- Edge cases with malformed requests
-
-**Error Handling Tests:**
-- 404 error handling for unknown routes
-- Malformed request handling
-- Invalid query parameter handling
-- Server error scenarios
+- Application startup and configuration
+- Health check endpoints
+- Version information retrieval
+- Version combination validation
+- Error handling scenarios
+- Signal termination testing
 
 ### Running Tests
-
 ```bash
 # Install dependencies
 npm install
@@ -214,154 +147,22 @@ npm install
 # Run all tests
 npm test
 
-# Run with coverage report
+# Run with coverage
 npm run test:coverage
 
-# Run in watch mode (development)
+# Watch mode
 npm run test:watch
-
-# Run specific test suite
-npx jest tests/validate-versions.test.js
-
-# Run tests with verbose output
-npm test -- --verbose
 ```
-
-### Test Configuration
-
-**Jest Configuration (`package.json`):**
-```json
-{
-  "jest": {
-    "testEnvironment": "node",
-    "collectCoverageFrom": [
-      "*.js",
-      "!node_modules/**",
-      "!tests/**"
-    ],
-    "coverageDirectory": "coverage",
-    "coverageReporters": ["text", "lcov", "html"]
-  }
-}
-```
-
-### Test Examples
-
-**Health Check Testing:**
-```javascript
-describe('GET /health', () => {
-  it('should return healthy status', async () => {
-    const response = await request(app)
-      .get('/health')
-      .expect(200);
-    
-    expect(response.body).toHaveProperty('status', 'healthy');
-    expect(response.body).toHaveProperty('service', 'version-service');
-    expect(response.body).toHaveProperty('timestamp');
-  });
-});
-```
-
-**Version Validation Testing:**
-```javascript
-describe('GET /validate-versions', () => {
-  it('should validate known good combination', async () => {
-    const response = await request(app)
-      .get('/validate-versions?backend=1.0.0&frontend=0.1.0&scraper=1.0.0')
-      .expect(200);
-    
-    expect(response.body.valid).toBe(true);
-    expect(response.body.status).toBe('tested');
-  });
-  
-  it('should handle invalid combinations', async () => {
-    const response = await request(app)
-      .get('/validate-versions?backend=999.0.0&frontend=999.0.0&scraper=999.0.0')
-      .expect(200);
-    
-    expect(response.body.valid).toBe(false);
-    expect(response.body.status).toBe('invalid');
-  });
-});
-```
-
-### Development Testing
-
-```bash
-# Watch mode for continuous testing
-npm run test:watch
-
-# Test specific functionality during development
-npx jest validate-versions --watch
-
-# Check test coverage
-npm run test:coverage
-```
-
-### WSL Testing Compatibility
-
-**NVM and WSL Setup Requirements**:
-1. Install Node Version Manager (NVM)
-2. Use NVM to install and manage Node.js versions
-3. Ensure consistent Node.js environment across WSL
-
-**Recommended WSL Test Setup**:
-```bash
-# Install NVM (if not already installed)
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
-
-# Restart terminal or source ~/.bashrc
-source ~/.bashrc
-
-# Install recommended Node.js version (check package.json)
-nvm install 18.16.1  # Or the version specified in your project
-nvm use 18.16.1
-
-# Set bash as default script shell
-npm config set script-shell /bin/bash
-
-# Install dependencies
-npm ci
-
-# Run tests with Node.js options for WSL compatibility
-NODE_OPTIONS=--experimental-vm-modules npm test
-```
-
-**Common WSL/Windows Path Issues**:
-- Always use NVM to manage Node.js versions
-- Ensure line endings are set to LF (not CRLF)
-- Use absolute paths when referencing test files
-- Use `npm ci` instead of `npm install` for consistent dependency resolution
-
-### CI/CD Integration
-
-```bash
-# CI test command
-NODE_ENV=test npm test
-
-# Coverage reporting for CI
-NODE_ENV=test npm run test:coverage
-```
-
-### Testing Best Practices
-
-1. **Integration Focus**: Tests actual HTTP requests to ensure real-world behavior
-2. **Configuration Testing**: Validates version.json file reading and parsing
-3. **Edge Case Coverage**: Tests malformed requests and error scenarios
-4. **Response Validation**: Ensures consistent API response formats
-5. **Environment Isolation**: Tests run in isolated test environment
 
 ## Environment Variables
 
-- `PORT`: Server port (default: 3020)
-  - Development: 3011
-  - Test: 3006
+- `PORT`: Server port
+  - Development: 3006
+  - Test: 3011
   - Production: 3001
-- `NODE_ENV`: Environment (development/production)
+- `NODE_ENV`: Environment mode
 
 ## Development
-
-### Local Development
 
 ```bash
 # Install dependencies
@@ -370,92 +171,44 @@ npm install
 # Start development server
 npm run dev
 
-# Start production server
-npm start
-
-# Run tests in development
-npm run test:watch
+# Run tests
+npm test
 ```
 
-### Testing in Development
+## Docker Deployment
 
 ```bash
-# Watch mode for continuous testing
-npm run test:watch
-
-# Test specific endpoint
-npx jest health.test.js --watch
-
-# Check test coverage
-npm run test:coverage
-```
-
-## Deployment
-
-### Docker Build and Configuration
-
-**Recent Build Improvements:**
-- Added explicit `app.js` to Docker build context
-- Moved `semver` to production dependencies
-- Enhanced Docker build reproducibility
-
-```bash
-# Build the Docker image
+# Build Docker image
 docker build -t version-service .
 
-# Development Container
-docker run -p 3011:3011 -e PORT=3011 version-service
-
-# Production Container 
-docker run -p 3001:3001 -e PORT=3001 version-service
+# Run containers
+docker run -p 3006:3006 -e PORT=3006 version-service  # Development
+docker run -p 3011:3011 -e PORT=3011 version-service  # Testing
+docker run -p 3001:3001 -e PORT=3001 version-service  # Production
 ```
-
-### Docker Troubleshooting
-
-**Common Issues and Solutions:**
-1. Ensure `version.json` is present in build context
-2. Use `npm ci` for consistent dependency installation
-3. Verify Node.js version compatibility (>=18)
-
-### Health Check
-The container includes built-in health checks:
-```bash
-# Development health check
-curl http://localhost:3011/health
-
-# Production health check
-curl http://localhost:3001/health
-```
-
-**Health Check Reliability:**
-- 30-second interval between checks
-- 3-second timeout
-- 10-second startup grace period
-- 3 retry attempts before marking container unhealthy
 
 ## Integration
 
-This service is called by the backend to:
-1. Get application version information for display
-2. Validate service version combinations for compatibility checking
+Provides version and compatibility information for:
+1. Application version display
+2. Service version compatibility checking
 
 **Backend Integration Example:**
 ```javascript
 // Get app version
-const response = await fetch(`${VERSION_SERVICE_URL}/app-version`);
-const appInfo = await response.json();
+const appInfo = await fetch(`${VERSION_SERVICE_URL}/app-version`).json();
 
-// Validate combination
-const validation = await fetch(`${VERSION_SERVICE_URL}/validate-versions?backend=${backendVer}&frontend=${frontendVer}&scraper=${scraperVer}`);
-const validationResult = await validation.json();
+// Validate service combination
+const validation = await fetch(
+  `${VERSION_SERVICE_URL}/validate-versions?backend=${backendVer}&frontend=${frontendVer}&scraper=${scraperVer}`
+).json();
 ```
 
-## Architecture
+## Architecture Principles
 
-The version service is designed to be:
-- **Stateless**: All configuration is file-based
-- **Lightweight**: Minimal dependencies and resource usage  
-- **Independent**: Can be updated without affecting other services
-- **Extensible**: Easy to add new validation rules and combinations
+- **Stateless**: File-based configuration
+- **Lightweight**: Minimal dependencies
+- **Independent**: Easily updatable
+- **Extensible**: Simple rule addition
 
-This service eliminates the need for each service to manage version compatibility matrices independently, centralizing this critical information in one place.
+Centralizes version compatibility management across services.
