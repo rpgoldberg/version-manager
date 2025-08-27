@@ -1,1 +1,37 @@
-{"application":{"name":"test","version":"1.0.0"},"compatibility":{},"dependencies":{}}
+{
+  "application": {
+    "name": "figure-collector-version-service",
+    "version": "1.0.0",
+    "releaseDate": "19-Aug-2024",
+    "description": "Lightweight version management service for Figure Collector"
+  },
+  "compatibility": {
+    "testedCombinations": [
+      {
+        "backend": "1.0.0",
+        "frontend": "1.0.0",
+        "scraper": "1.0.0",
+        "verified": "19-Aug-2024"
+      }
+    ]
+  },
+  "dependencies": {
+    "backend": {
+      "scraper": "^1.0.0"
+    },
+    "frontend": {
+      "backend": "^1.0.0"
+    }
+  },
+  "services": {
+    "backend": {
+      "name": "Figure Collector Backend"
+    },
+    "frontend": {
+      "name": "Figure Collector Frontend"
+    },
+    "scraper": {
+      "name": "Page Scraper Service"
+    }
+  }
+}
