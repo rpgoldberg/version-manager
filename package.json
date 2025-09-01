@@ -1,7 +1,7 @@
 {
   "name": "figure-collector-version-service",
-  "version": "1.0.0",
-  "description": "Lightweight version management service for Figure Collector",
+  "version": "1.1.0",
+  "description": "Standalone version management microservice for Figure Collector",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",

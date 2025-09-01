@@ -1,6 +1,6 @@
-# Version Service
+# Version Service - Standalone Microservice
 
-Centralized version management and validation service for the Figure Collector application. Provides application version information and validates service version combinations. Features comprehensive test coverage with 120 test cases.
+Centralized version management and validation service for the Figure Collector application. Provides application version information and validates service version combinations through a standalone microservice architecture. Critically synchronized with figure-collector-infra version management and featuring comprehensive test coverage with 120 test cases.
 
 ## Features
 
@@ -45,9 +45,10 @@ Get application version information.
 ```json
 {
   "name": "figure-collector-version-service",
-  "version": "1.0.0",
-  "releaseDate": "19-Aug-2024",
-  "description": "Lightweight version management service for Figure Collector"
+  "version": "1.1.0",
+  "releaseDate": "01-Sep-2025",
+  "description": "Standalone version management microservice for Figure Collector",
+  "architectureStatus": "Standalone Microservice"
 }
 ```
 
@@ -208,7 +209,15 @@ const validation = await fetch(
 
 - **Stateless**: File-based configuration
 - **Lightweight**: Minimal dependencies
-- **Independent**: Easily updatable
+- **Independent**: Standalone microservice
+- **Centralized**: Cross-service version management
 - **Extensible**: Simple rule addition
+- **Infrastructure Synchronized**: Dynamic version tracking from figure-collector-infra
 
-Centralizes version compatibility management across services.
+### Infrastructure Synchronization
+This service is now a standalone microservice, dynamically synchronized with the figure-collector-infra version management system. Key synchronization features:
+- Real-time version tracking
+- Cross-service compatibility validation
+- Centralized version configuration management
+
+Centralizes version compatibility management across the entire Figure Collector service ecosystem.

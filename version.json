@@ -1,9 +1,72 @@
 {
   "application": {
-    "name": "figure-collector-version-service",
-    "version": "1.0.0",
-    "releaseDate": "19-Aug-2024",
-    "description": "Lightweight version management service for Figure Collector"
+    "name": "figure-collector-services",
+    "version": "1.1.0",
+    "releaseDate": "01-Sep-2025",
+    "description": "Figure collection management application"
+  },
+  "services": {
+    "backend": {
+      "name": "figure-collector-backend",
+      "version": "1.1.0",
+      "repository": "figure-collector-backend",
+      "dockerImage": "backend:v1.1.0",
+      "ownedBy": "figure-collector",
+      "coupledWith": [
+        "frontend"
+      ]
+    },
+    "frontend": {
+      "name": "figure-collector-frontend",
+      "version": "1.1.0",
+      "repository": "figure-collector-frontend",
+      "dockerImage": "frontend:v1.1.0",
+      "ownedBy": "figure-collector",
+      "coupledWith": [
+        "backend"
+      ]
+    },
+    "scraper": {
+      "name": "page-scraper",
+      "version": "1.1.0",
+      "repository": "page-scraper",
+      "dockerImage": "scraper:v1.1.0",
+      "ownedBy": "platform",
+      "coupledWith": [],
+      "standalone": true,
+      "description": "Generic web scraping service"
+    },
+    "infrastructure": {
+      "name": "figure-collector-infra",
+      "version": "1.1.0",
+      "repository": "figure-collector-infra",
+      "ownedBy": "figure-collector",
+      "dockerImage": "infrastructure:v1.1.0"
+    },
+    "version_manager": {
+      "name": "version_manager",
+      "version": "1.1.0",
+      "repository": "version_manager",
+      "dockerImage": "version_manager:v1.1.0",
+      "ownedBy": "platform",
+      "coupledWith": []
+    },
+    "integration_tests": {
+      "name": "integration_tests",
+      "version": "1.1.0",
+      "repository": "integration_tests",
+      "dockerImage": "integration_tests:v1.1.0",
+      "ownedBy": "platform",
+      "coupledWith": []
+    }
+  },
+  "dependencies": {
+    "backend": {
+      "scraper": "^1.1.0"
+    },
+    "frontend": {
+      "backend": "^1.1.0"
+    }
   },
   "compatibility": {
     "testedCombinations": [
@@ -11,27 +74,14 @@
         "backend": "1.0.0",
         "frontend": "1.0.0",
         "scraper": "1.0.0",
-        "verified": "19-Aug-2024"
+        "verified": "09-Aug-2025"
+      },
+      {
+        "backend": "1.1.0",
+        "frontend": "1.1.0",
+        "scraper": "1.1.0",
+        "verified": "01-Sep-2025"
       }
     ]
-  },
-  "dependencies": {
-    "backend": {
-      "scraper": "^1.0.0"
-    },
-    "frontend": {
-      "backend": "^1.0.0"
-    }
-  },
-  "services": {
-    "backend": {
-      "name": "Figure Collector Backend"
-    },
-    "frontend": {
-      "name": "Figure Collector Frontend"
-    },
-    "scraper": {
-      "name": "Page Scraper Service"
-    }
   }
 }
