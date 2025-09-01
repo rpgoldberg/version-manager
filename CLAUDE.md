@@ -44,7 +44,7 @@
 ## Available Sub-Agents
 
 ### Atomic Task Agents (Haiku Model)
-- **`test-generator-version-service`**: Jest + Supertest test generation for version service
+- **`test-generator-version-manager`**: Jest + Supertest test generation for version service
   - Version comparison logic testing
   - Configuration validation tests
   - Error handling scenarios
@@ -68,7 +68,7 @@ Use TodoWrite to plan tasks, then call sub-agents directly with proper Haiku con
 
 ```
 Task:
-subagent_type: test-generator-version-service
+subagent_type: test-generator-version-manager
 description: Generate comprehensive version service tests
 prompt:
 MODEL_OVERRIDE: claude-3-haiku-20240307
@@ -146,7 +146,7 @@ describe('Version Service', () => {
 ```
 .claude/
 ├── agents/
-│   ├── test-generator-version-service.md
+│   ├── test-generator-version-manager.md
 │   ├── documentation-manager.md
 │   └── validation-gates.md
 └── commands/
@@ -156,7 +156,7 @@ describe('Version Service', () => {
 ## Quality Assurance Workflow
 
 1. **Implementation**: Write code changes
-2. **Testing**: Call `test-generator-version-service` if new tests needed
+2. **Testing**: Call `test-generator-version-manager` if new tests needed
 3. **Validation**: Call `validation-gates` to ensure quality
 4. **Documentation**: Call `documentation-manager` to update docs
 5. **Verification**: Confirm all tests pass and docs are current

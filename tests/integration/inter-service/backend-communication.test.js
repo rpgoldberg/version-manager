@@ -145,7 +145,7 @@ describe('Version Service Inter-Service Communication', () => {
       expect(response.status).toBe(200);
       expect(response.body).toEqual(expect.objectContaining({
         status: 'healthy',
-        service: 'version-service',
+        service: 'version-manager',
         timestamp: expect.any(String)
       }));
     });
@@ -156,7 +156,7 @@ describe('Version Service Inter-Service Communication', () => {
       expect(response.status).toBe(200);
       expect(response.body).toEqual(expect.objectContaining({
         status: 'healthy',
-        service: 'version-service',
+        service: 'version-manager',
         versionData: 'loaded',
         timestamp: expect.any(String)
       }));

@@ -12,13 +12,13 @@ RUN npm install --only=production && \
 # Copy application code
 COPY index.js app.js ./
 
-# Copy version.json (should be copied into version-service directory before build)
+# Copy version.json (should be copied into version-manager directory before build)
 COPY version.json ./
 
 # Create non-root user
 RUN addgroup -g 1001 -S nodejs
-RUN adduser -S version-service -u 1001
-USER version-service
+RUN adduser -S version-manager -u 1001
+USER version-manager
 
 # Default port (will be overridden by Docker Compose)
 ENV PORT=3020

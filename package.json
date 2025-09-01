@@ -1,5 +1,5 @@
 {
-  "name": "figure-collector-version-service",
+  "name": "figure-collector-version-manager",
   "version": "1.1.0",
   "description": "Standalone version management microservice for Figure Collector",
   "main": "index.js",

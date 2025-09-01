@@ -44,7 +44,7 @@
 ### Step 4: Available Tools and Agents
 
 **Available Sub-Agents**:
-- `test-generator-version-service` (Haiku) - Jest + Supertest test generation
+- `test-generator-version-manager` (Haiku) - Jest + Supertest test generation
 - `documentation-manager` (Haiku) - Documentation synchronization
 - `validation-gates` - Testing and validation specialist
 

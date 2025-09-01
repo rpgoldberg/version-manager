@@ -20,7 +20,7 @@ Health check endpoint serving as root and basic health monitor.
 ```json
 {
   "status": "healthy",
-  "service": "version-service",
+  "service": "version-manager",
   "timestamp": "2025-08-09T00:00:00.000Z"
 }
 ```
@@ -32,7 +32,7 @@ Detailed health check endpoint with service status.
 ```json
 {
   "status": "healthy", 
-  "service": "version-service",
+  "service": "version-manager",
   "timestamp": "2025-08-09T00:00:00.000Z",
   "versionData": "loaded"
 }
@@ -44,7 +44,7 @@ Get application version information.
 **Response:**
 ```json
 {
-  "name": "figure-collector-version-service",
+  "name": "figure-collector-version-manager",
   "version": "1.1.0",
   "releaseDate": "01-Sep-2025",
   "description": "Standalone version management microservice for Figure Collector",
@@ -180,12 +180,12 @@ npm test
 
 ```bash
 # Build Docker image
-docker build -t version-service .
+docker build -t version-manager .
 
 # Run containers
-docker run -p 3006:3006 -e PORT=3006 version-service  # Development
-docker run -p 3011:3011 -e PORT=3011 version-service  # Testing
-docker run -p 3001:3001 -e PORT=3001 version-service  # Production
+docker run -p 3006:3006 -e PORT=3006 version-manager  # Development
+docker run -p 3011:3011 -e PORT=3011 version-manager  # Testing
+docker run -p 3001:3001 -e PORT=3001 version-manager  # Production
 ```
 
 ## Integration

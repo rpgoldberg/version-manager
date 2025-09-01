@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# Version Service - Containerized Testing with Coverage Extraction
+# Version Manager - Containerized Testing with Coverage Extraction
 # Runs tests in Docker container and extracts coverage reports for review
 
 set -e
 
-echo "🧪 Running Version Service tests with coverage extraction..."
+echo "🧪 Running Version Manager tests with coverage extraction..."
 
 # Create local directories for output
 mkdir -p ./test-results/coverage
@@ -13,7 +13,7 @@ mkdir -p ./test-results/reports
 
 # Build the test container using test Dockerfile
 echo "📦 Building test container..."
-docker build -f Dockerfile.test -t version-service-test .
+docker build -f Dockerfile.test -t version-manager-test .
 
 # Run tests with volume mounts to extract results
 echo "🔬 Executing tests..."
@@ -21,8 +21,8 @@ docker run --rm \
   -v $(pwd)/test-results/coverage:/app/test-output/coverage \
   -v $(pwd)/test-results/reports:/app/test-output/reports \
   -e NODE_ENV=test \
-  version-service-test sh -c "
-    echo 'Starting version service tests...' &&
+  version-manager-test sh -c "
+    echo 'Starting version manager tests...' &&
     npm run test:coverage &&
     echo 'Copying coverage data...' &&
     mkdir -p /app/test-output &&
@@ -33,7 +33,7 @@ docker run --rm \
   "
 
 echo ""
-echo "✅ Version Service tests completed!"
+echo "✅ Version Manager tests completed!"
 echo ""
 echo "📊 Coverage report available at: ./test-results/coverage/lcov-report/index.html"
 echo "📋 Test results available at: ./test-results/reports/"

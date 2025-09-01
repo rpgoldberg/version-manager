@@ -17,7 +17,7 @@ afterAll(() => {
   delete process.env.NODE_ENV;
 });
 
-describe('Version Service', () => {
+describe('Version Manager', () => {
   let app;
   let originalVersionData;
 
@@ -49,7 +49,7 @@ describe('Version Service', () => {
       
       expect(response.status).toBe(200);
       expect(response.body).toHaveProperty('status', 'healthy');
-      expect(response.body).toHaveProperty('service', 'version-service');
+      expect(response.body).toHaveProperty('service', 'version-manager');
       expect(response.body).toHaveProperty('timestamp');
       expect(new Date(response.body.timestamp)).toBeInstanceOf(Date);
     });
@@ -59,7 +59,7 @@ describe('Version Service', () => {
       
       expect(response.status).toBe(200);
       expect(response.body).toHaveProperty('status', 'healthy');
-      expect(response.body).toHaveProperty('service', 'version-service');
+      expect(response.body).toHaveProperty('service', 'version-manager');
       expect(response.body).toHaveProperty('timestamp');
       expect(response.body).toHaveProperty('versionData', 'loaded');
       expect(new Date(response.body.timestamp)).toBeInstanceOf(Date);
@@ -76,7 +76,7 @@ describe('Version Service', () => {
       const response = await request(app).get('/app-version');
       
       expect(response.status).toBe(200);
-      expect(response.body).toHaveProperty('name', 'figure-collector-version-service');
+      expect(response.body).toHaveProperty('name', 'figure-collector-version-manager');
       expect(response.body).toHaveProperty('version', '1.0.0');
       expect(response.body).toHaveProperty('releaseDate', '19-Aug-2024');
       expect(response.body).toHaveProperty('description', 'Lightweight version management service for Figure Collector');
@@ -281,7 +281,7 @@ describe('Version Service', () => {
       sigtermListeners[0]();
 
       expect(mockConsoleLog).toHaveBeenCalledWith(
-        '[VERSION-SERVICE] Received SIGTERM, shutting down gracefully'
+        '[VERSION-MANAGER] Received SIGTERM, shutting down gracefully'
       );
       expect(mockExit).toHaveBeenCalledWith(0);
 
@@ -293,7 +293,7 @@ describe('Version Service', () => {
       sigintListeners[0]();
 
       expect(mockConsoleLog).toHaveBeenCalledWith(
-        '[VERSION-SERVICE] Received SIGINT, shutting down gracefully'
+        '[VERSION-MANAGER] Received SIGINT, shutting down gracefully'
       );
       expect(mockExit).toHaveBeenCalledWith(0);
 

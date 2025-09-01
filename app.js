@@ -23,7 +23,7 @@ const createApp = (versionData) => {
   app.get('/', (req, res) => {
     res.json({ 
       status: 'healthy', 
-      service: 'version-service',
+      service: 'version-manager',
       timestamp: new Date().toISOString()
     });
   });
@@ -31,7 +31,7 @@ const createApp = (versionData) => {
   app.get('/health', (req, res) => {
     res.json({ 
       status: 'healthy', 
-      service: 'version-service',
+      service: 'version-manager',
       timestamp: new Date().toISOString(),
       versionData: versionData ? 'loaded' : 'missing'
     });
@@ -102,6 +102,10 @@ const createApp = (versionData) => {
         ? 'This service combination has been tested and verified'
         : 'Service versions appear compatible but untested';
       verifiedDate = matchingCombo.verified;
+      // If we have a verified tested combination, it's valid regardless of warnings
+      if (matchingCombo.verified) {
+        valid = true;
+      }
     }
 
     const responseData = {
