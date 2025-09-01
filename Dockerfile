@@ -10,7 +10,7 @@ RUN npm install --only=production && \
     apk add --no-cache curl
 
 # Copy application code
-COPY index.js app.js ./
+COPY index.js app.js service-registry.js ./
 
 # Copy version.json (should be copied into version-manager directory before build)
 COPY version.json ./
