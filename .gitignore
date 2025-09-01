@@ -13,10 +13,13 @@ logs/
 .env.local
 .env.test
 
-# Claude Code and Serena
-.claude/
-.serena/
-CLAUDE.md
+# Include Claude Code configurations for team collaboration
+# These provide valuable development infrastructure and agent definitions
+# !.claude/
+# !CLAUDE.md
+# Exclude only personal Claude preferences
+.claude/personal/
+.claude/user-*/
 
 # IDE files
 .vscode/
