@@ -1,9 +1,9 @@
 {
   "application": {
-    "name": "figure-collector-version-manager",
-    "version": "1.0.0",
-    "releaseDate": "19-Aug-2024",
-    "description": "Lightweight version management service for Figure Collector"
+    "name": "figure-collector-services",
+    "version": "2.0.0",
+    "releaseDate": "02-Sep-2025",
+    "description": "Figure collection management application"
   },
   "services": {
     "backend": {
@@ -45,9 +45,9 @@
     },
     "version-manager": {
       "name": "version-manager",
-      "version": "1.1.0",
+      "version": "2.0.0",
       "repository": "version-manager",
-      "dockerImage": "version-manager:v1.1.0",
+      "dockerImage": "version-manager:v2.0.0",
       "ownedBy": "platform",
       "coupledWith": []
     },
@@ -62,10 +62,10 @@
   },
   "dependencies": {
     "backend": {
-      "scraper": "^1.0.0"
+      "scraper": "^1.1.0"
     },
     "frontend": {
-      "backend": "^1.0.0"
+      "backend": "^1.1.0"
     }
   },
   "compatibility": {
@@ -74,7 +74,7 @@
         "backend": "1.0.0",
         "frontend": "1.0.0",
         "scraper": "1.0.0",
-        "verified": "19-Aug-2024"
+        "verified": "09-Aug-2025"
       },
       {
         "backend": "1.1.0",
