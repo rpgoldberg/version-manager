@@ -76,10 +76,10 @@ describe('Version Manager', () => {
       const response = await request(app).get('/app-version');
       
       expect(response.status).toBe(200);
-      expect(response.body).toHaveProperty('name', 'figure-collector-version-manager');
-      expect(response.body).toHaveProperty('version', '1.0.0');
-      expect(response.body).toHaveProperty('releaseDate', '19-Aug-2024');
-      expect(response.body).toHaveProperty('description', 'Lightweight version management service for Figure Collector');
+      expect(response.body).toHaveProperty('name', 'figure-collector-services');
+      expect(response.body).toHaveProperty('version', '2.0.0');
+      expect(response.body).toHaveProperty('releaseDate', '02-Sep-2025');
+      expect(response.body).toHaveProperty('description', 'Figure collection management application');
     });
   });
 
@@ -128,7 +128,7 @@ describe('Version Manager', () => {
       expect(response.status).toBe(200);
       expect(response.body).toHaveProperty('valid', true);
       expect(response.body).toHaveProperty('status', 'tested');
-      expect(response.body).toHaveProperty('verified', '19-Aug-2024');
+      expect(response.body).toHaveProperty('verified', '09-Aug-2025');
       expect(response.body).toHaveProperty('message', 'This service combination has been tested and verified');
     });
 
