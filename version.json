@@ -7,65 +7,19 @@
   },
   "services": {
     "backend": {
-      "name": "figure-collector-backend",
       "version": "1.1.0",
-      "repository": "figure-collector-backend",
-      "dockerImage": "backend:v1.1.0",
-      "ownedBy": "figure-collector",
-      "coupledWith": [
-        "frontend"
-      ]
+      "name": "figure-collector-backend",
+      "description": "REST API backend service"
     },
     "frontend": {
+      "version": "1.0.0",
       "name": "figure-collector-frontend",
-      "version": "1.1.0",
-      "repository": "figure-collector-frontend",
-      "dockerImage": "frontend:v1.1.0",
-      "ownedBy": "figure-collector",
-      "coupledWith": [
-        "backend"
-      ]
+      "description": "React-based web UI"
     },
     "scraper": {
+      "version": "1.0.0",
       "name": "page-scraper",
-      "version": "1.1.0",
-      "repository": "page-scraper",
-      "dockerImage": "scraper:v1.1.0",
-      "ownedBy": "platform",
-      "coupledWith": [],
-      "standalone": true,
-      "description": "Generic web scraping service"
-    },
-    "infrastructure": {
-      "name": "figure-collector-infra",
-      "version": "1.1.0",
-      "repository": "figure-collector-infra",
-      "ownedBy": "figure-collector",
-      "dockerImage": "infrastructure:v1.1.0"
-    },
-    "version-manager": {
-      "name": "version-manager",
-      "version": "2.0.0",
-      "repository": "version-manager",
-      "dockerImage": "version-manager:v2.0.0",
-      "ownedBy": "platform",
-      "coupledWith": []
-    },
-    "integration_tests": {
-      "name": "integration_tests",
-      "version": "1.1.0",
-      "repository": "integration_tests",
-      "dockerImage": "integration_tests:v1.1.0",
-      "ownedBy": "platform",
-      "coupledWith": []
-    }
-  },
-  "dependencies": {
-    "backend": {
-      "scraper": "^1.1.0"
-    },
-    "frontend": {
-      "backend": "^1.1.0"
+      "description": "Web scraping service with Puppeteer"
     }
   },
   "compatibility": {
@@ -74,14 +28,24 @@
         "backend": "1.0.0",
         "frontend": "1.0.0",
         "scraper": "1.0.0",
+        "tested": true,
         "verified": "09-Aug-2025"
       },
       {
         "backend": "1.1.0",
-        "frontend": "1.1.0",
-        "scraper": "1.1.0",
-        "verified": "01-Sep-2025"
+        "frontend": "1.0.0",
+        "scraper": "1.0.0",
+        "tested": true,
+        "verified": "02-Sep-2025"
       }
     ]
+  },
+  "dependencies": {
+    "backend": {
+      "scraper": "^1.0.0"
+    },
+    "frontend": {
+      "backend": "^1.1.0"
+    }
   }
 }
