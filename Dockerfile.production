@@ -13,11 +13,9 @@ LABEL org.opencontainers.image.description="Version management service"
 LABEL org.opencontainers.image.vendor="Figure Collector Services"
 LABEL org.opencontainers.image.source="https://github.com/${GITHUB_ORG}/${GITHUB_REPO}"
 
-# Install dumb-init for signal handling
-RUN apk add --no-cache dumb-init
-
-# Create non-root user
-RUN addgroup -g 1001 -S nodejs && \
+# Install dumb-init and create non-root user in a single layer
+RUN apk add --no-cache dumb-init && \
+    addgroup -g 1001 -S nodejs && \
     adduser -S nodejs -u 1001
 
 WORKDIR /app
@@ -34,11 +32,9 @@ RUN npm ci --only=production --ignore-scripts && npm cache clean --force
 # Files are owned by root:root with 644 permissions (read-only for non-root)
 COPY --chown=root:root --chmod=644 index.js app.js service-registry.js version.json ./
 
-# Set execute permissions for the main script
-RUN chmod 755 index.js
-
-# Create a writable directory for runtime data if needed
-RUN mkdir -p /app/data && \
+# Set permissions and create writable directories in a single layer
+RUN chmod 755 index.js && \
+    mkdir -p /app/data && \
     chown nodejs:nodejs /app/data && \
     chmod 755 /app/data
 
