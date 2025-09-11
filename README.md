@@ -178,6 +178,7 @@ npm test
 
 ## Docker Deployment
 
+### Production Container
 ```bash
 # Build Docker image
 docker build -t version-manager .
@@ -187,6 +188,26 @@ docker run -p 3006:3006 -e PORT=3006 version-manager  # Development
 docker run -p 3011:3011 -e PORT=3011 version-manager  # Testing
 docker run -p 3001:3001 -e PORT=3001 version-manager  # Production
 ```
+
+### Test Container (Toggleable)
+The test container (`Dockerfile.test`) can run in two modes:
+
+```bash
+# Build test image
+docker build -f Dockerfile.test -t version-manager:test .
+
+# Mode 1: Run tests (default)
+docker run version-manager:test
+
+# Mode 2: Run as service (for integration testing)
+docker run -e RUN_SERVER=1 -p 3011:3011 version-manager:test
+```
+
+**Features:**
+- Default mode runs test suite with coverage
+- Setting `RUN_SERVER=1` starts the service instead
+- Useful for integration testing scenarios
+- Consistent across all services in the stack
 
 ## Integration
 
