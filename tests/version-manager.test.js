@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const { createApp, loadVersionData } = require('../app');
 const ServiceRegistry = require('../service-registry');
+const testVersionData = require('./fixtures/test-version.json');
 
 // Mock console methods to avoid noise during tests
 const originalConsole = { ...console };
@@ -68,25 +69,25 @@ describe('Version Manager', () => {
 
   describe('App Version Endpoint', () => {
     beforeEach(() => {
-      const versionData = loadVersionData();
-      app = createApp(versionData);
+      // Use test data instead of production data
+      app = createApp(testVersionData);
     });
 
     test('GET /app-version should return application version info', async () => {
       const response = await request(app).get('/app-version');
       
       expect(response.status).toBe(200);
-      expect(response.body).toHaveProperty('name', 'figure-collector-services');
-      expect(response.body).toHaveProperty('version', '2.0.0');
-      expect(response.body).toHaveProperty('releaseDate', '02-Sep-2025');
-      expect(response.body).toHaveProperty('description', 'Figure collection management application');
+      expect(response.body).toHaveProperty('name', 'test-app');
+      expect(response.body).toHaveProperty('version', '1.0.0');
+      expect(response.body).toHaveProperty('releaseDate', '01-Jan-2024');
+      expect(response.body).toHaveProperty('description', 'Test application');
     });
   });
 
   describe('Version Info Endpoint', () => {
     beforeEach(() => {
-      const versionData = loadVersionData();
-      app = createApp(versionData);
+      // Use test data
+      app = createApp(testVersionData);
     });
 
     test('GET /version-info should return complete version data', async () => {
@@ -112,8 +113,8 @@ describe('Version Manager', () => {
 
   describe('Version Validation Endpoint', () => {
     beforeEach(() => {
-      const versionData = loadVersionData();
-      app = createApp(versionData);
+      // Use test data
+      app = createApp(testVersionData);
     });
 
     test('GET /validate-versions should validate tested combinations', async () => {
