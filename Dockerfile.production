@@ -7,7 +7,7 @@ FROM node:20-alpine AS production
 LABEL org.opencontainers.image.title="Figure Collector Version Manager"
 LABEL org.opencontainers.image.description="Version management service"
 LABEL org.opencontainers.image.vendor="Figure Collector Services"
-LABEL org.opencontainers.image.source="https://github.com/yourorg/figure-collector-version-manager"
+LABEL org.opencontainers.image.source="https://github.com/rpgoldberg/version-manager"
 
 # Install dumb-init for signal handling
 RUN apk add --no-cache dumb-init
