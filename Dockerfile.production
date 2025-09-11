@@ -1,6 +1,9 @@
 # Production Dockerfile for Version Manager Service
 # Lightweight Node.js service
 
+# Using official Node.js Alpine image
+# Note: Base image runs as root during build (required for setup)
+# We switch to non-root user before runtime for security
 FROM node:20-alpine AS production
 
 # Build arguments for customization
