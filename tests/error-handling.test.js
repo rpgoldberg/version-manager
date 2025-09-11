@@ -2,6 +2,7 @@ const request = require('supertest');
 const fs = require('fs');
 const path = require('path');
 const { createApp, loadVersionData } = require('../app');
+const testVersionData = require('./fixtures/test-version.json');
 
 // Mock console methods to avoid noise during tests
 const originalConsole = { ...console };
@@ -39,8 +40,7 @@ describe('Error Handling and Edge Cases', () => {
 
   describe('Malformed Request Handling', () => {
     beforeEach(() => {
-      const versionData = loadVersionData();
-      app = createApp(versionData);
+      app = createApp(testVersionData);
     });
 
     test('should handle requests with invalid query string characters', async () => {
@@ -88,8 +88,7 @@ describe('Error Handling and Edge Cases', () => {
 
   describe('Invalid HTTP Methods', () => {
     beforeEach(() => {
-      const versionData = loadVersionData();
-      app = createApp(versionData);
+      app = createApp(testVersionData);
     });
 
     test('should handle POST requests to GET-only endpoints', async () => {
@@ -124,8 +123,7 @@ describe('Error Handling and Edge Cases', () => {
 
   describe('Non-existent Endpoints', () => {
     beforeEach(() => {
-      const versionData = loadVersionData();
-      app = createApp(versionData);
+      app = createApp(testVersionData);
     });
 
     test('should return 404 for non-existent endpoints', async () => {
@@ -153,8 +151,7 @@ describe('Error Handling and Edge Cases', () => {
 
   describe('Concurrent Request Handling', () => {
     beforeEach(() => {
-      const versionData = loadVersionData();
-      app = createApp(versionData);
+      app = createApp(testVersionData);
     });
 
     test('should handle multiple concurrent requests', async () => {
@@ -190,8 +187,7 @@ describe('Error Handling and Edge Cases', () => {
 
   describe('Memory and Performance Edge Cases', () => {
     beforeEach(() => {
-      const versionData = loadVersionData();
-      app = createApp(versionData);
+      app = createApp(testVersionData);
     });
 
     test('should handle requests with many query parameters', async () => {
@@ -212,6 +208,11 @@ describe('Error Handling and Edge Cases', () => {
     test('should handle large configuration files', async () => {
       const largeConfig = {
         application: { name: 'test-app', version: '1.0.0' },
+        services: {
+          backend: { version: '1.0.500', name: 'test-backend' },
+          frontend: { version: '1.0.500', name: 'test-frontend' },
+          scraper: { version: '1.0.500', name: 'test-scraper' }
+        },
         compatibility: {
           testedCombinations: Array.from({ length: 1000 }, (_, i) => ({
             backend: `1.0.${i}`,
@@ -223,11 +224,8 @@ describe('Error Handling and Edge Cases', () => {
         dependencies: {}
       };
       
-      fs.writeFileSync(versionPath, JSON.stringify(largeConfig, null, 2));
-      
-      // Reload the app with large config
-      const versionData = loadVersionData();
-      app = createApp(versionData);
+      // Create app with large config directly (no file I/O)
+      app = createApp(largeConfig);
       
       const response = await request(app)
         .get('/validate-versions')
@@ -240,8 +238,7 @@ describe('Error Handling and Edge Cases', () => {
 
   describe('Response Format Validation', () => {
     beforeEach(() => {
-      const versionData = loadVersionData();
-      app = createApp(versionData);
+      app = createApp(testVersionData);
     });
 
     test('should always return valid JSON', async () => {
@@ -278,8 +275,7 @@ describe('Error Handling and Edge Cases', () => {
 
   describe('CORS and Headers', () => {
     beforeEach(() => {
-      const versionData = loadVersionData();
-      app = createApp(versionData);
+      app = createApp(testVersionData);
     });
 
     test('should include CORS headers', async () => {
