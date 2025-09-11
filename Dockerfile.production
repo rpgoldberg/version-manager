@@ -26,7 +26,8 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install production dependencies
-RUN npm ci --only=production && npm cache clean --force
+# Using --ignore-scripts for security to prevent execution of npm scripts
+RUN npm ci --only=production --ignore-scripts && npm cache clean --force
 
 # Copy only necessary application files with read-only permissions
 # Explicitly copy required files to avoid including sensitive data
