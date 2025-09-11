@@ -28,12 +28,17 @@ COPY package*.json ./
 # Install production dependencies
 RUN npm ci --only=production && npm cache clean --force
 
-# Copy application files
-COPY --chown=nodejs:nodejs . .
+# Copy application files with read-only permissions (security best practice)
+# Files are owned by root:root with 644 permissions (read-only for non-root)
+COPY --chown=root:root --chmod=644 . .
 
-# Ensure version.json is writable by the application
-RUN chown nodejs:nodejs version.json && \
-    chmod 644 version.json
+# Set execute permissions for the main script
+RUN chmod 755 index.js
+
+# Create a writable directory for runtime data if needed
+RUN mkdir -p /app/data && \
+    chown nodejs:nodejs /app/data && \
+    chmod 755 /app/data
 
 # Switch to non-root user
 USER nodejs
