@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const semver = require('semver');
 const { createApp, loadVersionData } = require('../app');
+const testVersionData = require('./fixtures/test-version.json');
 
 // Mock console methods to avoid noise during tests
 const originalConsole = { ...console };
@@ -19,27 +20,16 @@ afterAll(() => {
 
 describe('Version Validation Logic', () => {
   let app;
-  const versionPath = path.join(__dirname, '../version.json');
-  let originalVersionData;
-
-  beforeEach(() => {
-    // Backup original version.json
-    if (fs.existsSync(versionPath)) {
-      originalVersionData = fs.readFileSync(versionPath, 'utf8');
-    }
-  });
-
-  afterEach(() => {
-    // Restore original version.json
-    if (originalVersionData) {
-      fs.writeFileSync(versionPath, originalVersionData);
-    }
-  });
 
   describe('Tested Combinations', () => {
     test('should return tested status for exact matches', async () => {
       const config = {
         application: { name: 'test-app', version: '1.0.0' },
+        services: {
+          backend: { version: '1.0.0', name: 'test-backend' },
+          frontend: { version: '1.0.0', name: 'test-frontend' },
+          scraper: { version: '1.0.0', name: 'test-scraper' }
+        },
         compatibility: {
           testedCombinations: [
             {
@@ -55,12 +45,11 @@ describe('Version Validation Logic', () => {
               verified: '10-Aug-2025'
             }
           ]
-        }
+        },
+        dependencies: {}
       };
       
-      fs.writeFileSync(versionPath, JSON.stringify(config, null, 2));
-      const versionData = loadVersionData();
-      app = createApp(versionData);
+      app = createApp(config);
 
       // Test first combination
       const response1 = await request(app)
@@ -86,6 +75,11 @@ describe('Version Validation Logic', () => {
     test('should handle partial matches (not all params match)', async () => {
       const config = {
         application: { name: 'test-app', version: '1.0.0' },
+        services: {
+          backend: { version: '1.0.0', name: 'test-backend' },
+          frontend: { version: '1.0.0', name: 'test-frontend' },
+          scraper: { version: '1.1.0', name: 'test-scraper' }
+        },
         compatibility: {
           testedCombinations: [
             {
@@ -102,9 +96,7 @@ describe('Version Validation Logic', () => {
         }
       };
       
-      fs.writeFileSync(versionPath, JSON.stringify(config, null, 2));
-      const versionData = loadVersionData();
-      app = createApp(versionData);
+      app = createApp(config);
 
       const response = await request(app)
         .get('/validate-versions')
@@ -119,6 +111,11 @@ describe('Version Validation Logic', () => {
     test('should validate backend-scraper dependencies', async () => {
       const config = {
         application: { name: 'test-app', version: '1.0.0' },
+        services: {
+          backend: { version: '2.0.0', name: 'test-backend' },
+          frontend: { version: '2.0.0', name: 'test-frontend' },
+          scraper: { version: '1.0.0', name: 'test-scraper' }
+        },
         compatibility: { testedCombinations: [] },
         dependencies: {
           backend: { scraper: '^1.5.0' },
@@ -126,9 +123,7 @@ describe('Version Validation Logic', () => {
         }
       };
       
-      fs.writeFileSync(versionPath, JSON.stringify(config, null, 2));
-      const versionData = loadVersionData();
-      app = createApp(versionData);
+      app = createApp(config);
 
       // Test mismatched scraper version
       const response = await request(app)
@@ -144,6 +139,11 @@ describe('Version Validation Logic', () => {
     test('should validate frontend-backend dependencies', async () => {
       const config = {
         application: { name: 'test-app', version: '1.0.0' },
+        services: {
+          backend: { version: '1.5.0', name: 'test-backend' },
+          frontend: { version: '2.0.0', name: 'test-frontend' },
+          scraper: { version: '1.0.0', name: 'test-scraper' }
+        },
         compatibility: { testedCombinations: [] },
         dependencies: {
           backend: { scraper: '^1.0.0' },
@@ -151,9 +151,7 @@ describe('Version Validation Logic', () => {
         }
       };
       
-      fs.writeFileSync(versionPath, JSON.stringify(config, null, 2));
-      const versionData = loadVersionData();
-      app = createApp(versionData);
+      app = createApp(config);
 
       // Test mismatched backend version
       const response = await request(app)
@@ -169,6 +167,11 @@ describe('Version Validation Logic', () => {
     test('should handle multiple dependency mismatches', async () => {
       const config = {
         application: { name: 'test-app', version: '1.0.0' },
+        services: {
+          backend: { version: '1.0.0', name: 'test-backend' },
+          frontend: { version: '2.0.0', name: 'test-frontend' },
+          scraper: { version: '1.0.0', name: 'test-scraper' }
+        },
         compatibility: { testedCombinations: [] },
         dependencies: {
           backend: { scraper: '^2.0.0' },
@@ -176,9 +179,7 @@ describe('Version Validation Logic', () => {
         }
       };
       
-      fs.writeFileSync(versionPath, JSON.stringify(config, null, 2));
-      const versionData = loadVersionData();
-      app = createApp(versionData);
+      app = createApp(config);
 
       const response = await request(app)
         .get('/validate-versions')
@@ -195,13 +196,16 @@ describe('Version Validation Logic', () => {
     test('should handle missing dependency configurations', async () => {
       const config = {
         application: { name: 'test-app', version: '1.0.0' },
+        services: {
+          backend: { version: '1.0.0', name: 'test-backend' },
+          frontend: { version: '2.0.0', name: 'test-frontend' },
+          scraper: { version: '1.0.0', name: 'test-scraper' }
+        },
         compatibility: { testedCombinations: [] },
         dependencies: {} // No dependencies defined
       };
       
-      fs.writeFileSync(versionPath, JSON.stringify(config, null, 2));
-      const versionData = loadVersionData();
-      app = createApp(versionData);
+      app = createApp(config);
 
       const response = await request(app)
         .get('/validate-versions')
@@ -218,6 +222,11 @@ describe('Version Validation Logic', () => {
     test('should handle caret versions correctly', async () => {
       const config = {
         application: { name: 'test-app', version: '1.0.0' },
+        services: {
+          backend: { version: '1.0.0', name: 'test-backend' },
+          frontend: { version: '1.0.0', name: 'test-frontend' },
+          scraper: { version: '1.0.0', name: 'test-scraper' }
+        },
         compatibility: { testedCombinations: [] },
         dependencies: {
           backend: { scraper: '^1.0.0' },
@@ -225,9 +234,7 @@ describe('Version Validation Logic', () => {
         }
       };
       
-      fs.writeFileSync(versionPath, JSON.stringify(config, null, 2));
-      const versionData = loadVersionData();
-      app = createApp(versionData);
+      app = createApp(config);
 
       const response = await request(app)
         .get('/validate-versions')
@@ -241,6 +248,11 @@ describe('Version Validation Logic', () => {
     test('should handle versions without caret', async () => {
       const config = {
         application: { name: 'test-app', version: '1.0.0' },
+        services: {
+          backend: { version: '1.0.0', name: 'test-backend' },
+          frontend: { version: '1.0.0', name: 'test-frontend' },
+          scraper: { version: '1.0.0', name: 'test-scraper' }
+        },
         compatibility: { testedCombinations: [] },
         dependencies: {
           backend: { scraper: '1.0.0' },
@@ -248,9 +260,7 @@ describe('Version Validation Logic', () => {
         }
       };
       
-      fs.writeFileSync(versionPath, JSON.stringify(config, null, 2));
-      const versionData = loadVersionData();
-      app = createApp(versionData);
+      app = createApp(config);
 
       const response = await request(app)
         .get('/validate-versions')
@@ -266,13 +276,16 @@ describe('Version Validation Logic', () => {
     test('should handle null/undefined version parameters', async () => {
       const config = {
         application: { name: 'test-app', version: '1.0.0' },
+        services: {
+          backend: { version: '1.0.0', name: 'test-backend' },
+          frontend: { version: '1.0.0', name: 'test-frontend' },
+          scraper: { version: '1.0.0', name: 'test-scraper' }
+        },
         compatibility: { testedCombinations: [] },
         dependencies: {}
       };
       
-      fs.writeFileSync(versionPath, JSON.stringify(config, null, 2));
-      const versionData = loadVersionData();
-      app = createApp(versionData);
+      app = createApp(config);
 
       const response = await request(app)
         .get('/validate-versions')
@@ -285,6 +298,11 @@ describe('Version Validation Logic', () => {
     test('should handle very long version strings', async () => {
       const config = {
         application: { name: 'test-app', version: '1.0.0' },
+        services: {
+          backend: { version: '1.0.0', name: 'test-backend' },
+          frontend: { version: '1.0.0', name: 'test-frontend' },
+          scraper: { version: '1.0.0', name: 'test-scraper' }
+        },
         compatibility: { testedCombinations: [] },
         dependencies: {
           backend: { scraper: '^1.0.0' },
@@ -292,9 +310,7 @@ describe('Version Validation Logic', () => {
         }
       };
       
-      fs.writeFileSync(versionPath, JSON.stringify(config, null, 2));
-      const versionData = loadVersionData();
-      app = createApp(versionData);
+      app = createApp(config);
 
       const longVersion = semver.valid('1.0.0') || '1.0.0';
       const response = await request(app)
@@ -308,13 +324,16 @@ describe('Version Validation Logic', () => {
     test('should handle special characters in version strings', async () => {
       const config = {
         application: { name: 'test-app', version: '1.0.0' },
+        services: {
+          backend: { version: '1.0.0-alpha+build.1', name: 'test-backend' },
+          frontend: { version: '2.0.0-beta', name: 'test-frontend' },
+          scraper: { version: '1.5.0-rc.1', name: 'test-scraper' }
+        },
         compatibility: { testedCombinations: [] },
         dependencies: {}
       };
       
-      fs.writeFileSync(versionPath, JSON.stringify(config, null, 2));
-      const versionData = loadVersionData();
-      app = createApp(versionData);
+      app = createApp(config);
 
       const response = await request(app)
         .get('/validate-versions')
@@ -326,6 +345,11 @@ describe('Version Validation Logic', () => {
     test('should return appropriate message for compatible untested versions', async () => {
       const config = {
         application: { name: 'test-app', version: '1.0.0' },
+        services: {
+          backend: { version: '1.0.0', name: 'test-backend' },
+          frontend: { version: '1.0.0', name: 'test-frontend' },
+          scraper: { version: '1.0.0', name: 'test-scraper' }
+        },
         compatibility: { testedCombinations: [] },
         dependencies: {
           backend: { scraper: '^1.0.0' },
@@ -333,9 +357,7 @@ describe('Version Validation Logic', () => {
         }
       };
       
-      fs.writeFileSync(versionPath, JSON.stringify(config, null, 2));
-      const versionData = loadVersionData();
-      app = createApp(versionData);
+      app = createApp(config);
 
       const response = await request(app)
         .get('/validate-versions')
