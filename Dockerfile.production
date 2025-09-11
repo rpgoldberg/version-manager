@@ -1,0 +1,48 @@
+# Production Dockerfile for Version Manager Service
+# Lightweight Node.js service
+
+FROM node:20-alpine AS production
+
+# Add labels
+LABEL org.opencontainers.image.title="Figure Collector Version Manager"
+LABEL org.opencontainers.image.description="Version management service"
+LABEL org.opencontainers.image.vendor="Figure Collector Services"
+LABEL org.opencontainers.image.source="https://github.com/yourorg/figure-collector-version-manager"
+
+# Install dumb-init for signal handling
+RUN apk add --no-cache dumb-init
+
+# Create non-root user
+RUN addgroup -g 1001 -S nodejs && \
+    adduser -S nodejs -u 1001
+
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+
+# Install production dependencies
+RUN npm ci --only=production && npm cache clean --force
+
+# Copy application files
+COPY --chown=nodejs:nodejs . .
+
+# Ensure version.json is writable by the application
+RUN chown nodejs:nodejs version.json && \
+    chmod 644 version.json
+
+# Switch to non-root user
+USER nodejs
+
+# Expose port
+EXPOSE 3001
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+  CMD node -e "require('http').get('http://localhost:3001/health', (r) => {if(r.statusCode !== 200) throw new Error()})"
+
+# Use dumb-init to handle signals
+ENTRYPOINT ["dumb-init", "--"]
+
+# Start application
+CMD ["node", "index.js"]
