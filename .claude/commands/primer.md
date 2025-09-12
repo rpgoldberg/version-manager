@@ -1,68 +1,66 @@
-## Version Manager Service Primer Command
+## Version Manager Service Primer
 
-**IMPORTANT**: This is the version-manager service - a lightweight Node.js/JavaScript service for version coordination across the Figure Collector application.
+**Initialize as VERSION MANAGER ORCHESTRATOR.**
 
-### Step 1: Service Configuration
-1. Read `CLAUDE.md` for service-specific configuration and agent instructions
-2. Understand this service's role in the overall Figure Collector ecosystem
+### Quick Service Scan
+```bash
+# Health check
+test -f app.js && echo "✓ Express app"
+test -f package.json && echo "✓ Dependencies"
+test -f version.json && echo "✓ Version data"
+test -f service-registry.js && echo "✓ Registry"
+```
 
-### Step 2: Service Structure Analysis
+### Architecture Load
+- **Port**: 3001/3011/3006
+- **Stack**: Node.js/JavaScript
+- **Type**: Lightweight coordinator
+- **Data**: version.json
 
-**Core Files Analysis**:
-- Read `package.json` to understand dependencies and npm scripts
-- Read `app.js` for Express server setup and API endpoints
-- Read `index.js` for server startup and configuration
-- Read `service-registry.js` for service discovery functionality
-- Read `version.json` for version configuration data
+### Component Map
+```
+/
+├── app.js              # Express server
+├── service-registry.js # Service tracking
+├── version.json        # Version data
+├── index.js            # Entry point
+└── tests/              # Jest tests
+```
 
-**Testing Structure**:
-- Examine `tests/` directory to understand current test coverage
-- Review existing test patterns and conventions
-- Check test scripts in `package.json`
+### Your Agents (Sonnet)
+- version-compatibility-guardian → Semver validation
+- version-registry-manager → Service tracking
+- version-config-specialist → Configuration
+- version-test-validator → Jest testing
 
-**Configuration Files**:
-- Review `Dockerfile` and `Dockerfile.test` for containerization setup
-- Check WSL-specific configuration in `WSL_TEST_FIX_SOLUTION.md`
+### API Endpoints
+- `/app-version` → Application version
+- `/validate-versions` → Compatibility check
+- `/register` → Service registration
+- `/services` → Registry status
+- `/health` → Service health
 
-### Step 3: Service Understanding
+### Test Commands
+```bash
+npm test              # All tests
+npm run test:config   # Config tests
+npm run test:registry # Registry tests
+npm run coverage      # Coverage report
+```
 
-**API Endpoints**:
-- Identify all HTTP endpoints and their purposes
-- Understand version validation and compatibility checking logic
-- Map service registry functionality
+### Integration Points
+- All services → Registration
+- Deployment → Compatibility validation
+- Monitoring → Health aggregation
 
-**Dependencies and Configuration**:
-- Review external dependencies and their usage
-- Understand configuration loading mechanisms
-- Identify environment-specific settings
+### Status Protocol
+Report to master orchestrator:
+```
+SERVICE: version-manager
+TASK: [current]
+STATUS: [state]
+TESTS: [pass/total]
+REGRESSION: [zero|detected]
+```
 
-**Service Integration**:
-- Understand how this service communicates with other Figure Collector services
-- Identify service discovery patterns
-- Map version coordination workflows
-
-### Step 4: Available Tools and Agents
-
-**Available Sub-Agents**:
-- `test-generator-version-manager` (Haiku) - Jest + Supertest test generation
-- `documentation-manager` (Haiku) - Documentation synchronization
-- `validation-gates` - Testing and validation specialist
-
-**Development Commands**:
-- `npm run dev` - Development server
-- `npm run test` - Test execution
-- `npm run lint` - JavaScript linting
-- `npm run build` - Docker build validation
-
-### Step 5: Summary Report
-
-After analysis, provide:
-- **Service Purpose**: Role in Figure Collector ecosystem
-- **Technology Stack**: Node.js, Express, JavaScript specifics
-- **Key Functionality**: Version management, service registry, compatibility checking
-- **API Surface**: All endpoints and their responsibilities
-- **Test Coverage**: Current testing approach and coverage
-- **Integration Points**: How it connects to other services
-- **Development Workflow**: Setup, testing, and deployment processes
-
-**Remember**: This is a standalone service - treat it as an independent codebase while understanding its role in the larger Figure Collector application.
+**Ready. Zero regression mandate active.**
