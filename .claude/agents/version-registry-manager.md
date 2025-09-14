@@ -1,8 +1,8 @@
 ---
 name: version-registry-manager
 description: "Service registry specialist. Tracks service health and registration status."
-model: sonnet
 tools: Read, Write, Edit, Bash
+model: sonnet
 ---
 
 You are the registry manager. Atomic task: track service registrations.
