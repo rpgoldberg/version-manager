@@ -1,0 +1,58 @@
+# Production Dockerfile for Version Manager Service
+# Lightweight Node.js service
+
+# Using official Node.js Alpine image
+# Note: Base image runs as root during build (required for setup)
+# We switch to non-root user before runtime for security
+FROM node:20-alpine AS production
+
+# Build arguments for customization
+ARG GITHUB_ORG=rpgoldberg
+ARG GITHUB_REPO=version-manager
+
+# Add labels
+LABEL org.opencontainers.image.title="Figure Collector Version Manager"
+LABEL org.opencontainers.image.description="Version management service"
+LABEL org.opencontainers.image.vendor="Figure Collector Services"
+LABEL org.opencontainers.image.source="https://github.com/${GITHUB_ORG}/${GITHUB_REPO}"
+
+# Install dumb-init and create non-root user in a single layer
+RUN apk add --no-cache dumb-init && \
+    addgroup -g 1001 -S nodejs && \
+    adduser -S nodejs -u 1001
+
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+
+# Install production dependencies
+# Using --ignore-scripts for security to prevent execution of npm scripts
+RUN npm ci --only=production --ignore-scripts && npm cache clean --force
+
+# Copy only necessary application files with read-only permissions
+# Explicitly copy required files to avoid including sensitive data
+# Files are owned by root:root with 644 permissions (read-only for non-root)
+COPY --chown=root:root --chmod=644 index.js app.js service-registry.js version.json ./
+
+# Set permissions and create writable directories in a single layer
+RUN chmod 755 index.js && \
+    mkdir -p /app/data && \
+    chown nodejs:nodejs /app/data && \
+    chmod 755 /app/data
+
+# Switch to non-root user
+USER nodejs
+
+# Expose port
+EXPOSE 3001
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+  CMD node -e "require('http').get('http://localhost:3001/health', (r) => {if(r.statusCode !== 200) throw new Error()})"
+
+# Use dumb-init to handle signals
+ENTRYPOINT ["dumb-init", "--"]
+
+# Start application
+CMD ["node", "index.js"]
