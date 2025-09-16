@@ -24,3 +24,13 @@ logs/
 # IDE files
 .vscode/
 .DS_Store
+
+# Claude-specific files
+.claude/
+CLAUDE.md
+*claude-backup*
+
+# Backup files
+*.backup
+*.bak
+*~
