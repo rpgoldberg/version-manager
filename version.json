@@ -1,13 +1,13 @@
 {
   "application": {
     "name": "figure-collector-services",
-    "version": "2.0.0",
-    "releaseDate": "02-Sep-2025",
+    "version": "1.0.0",
+    "releaseDate": "09-Aug-2025",
     "description": "Figure collection management application"
   },
   "services": {
     "backend": {
-      "version": "1.1.0",
+      "version": "1.0.0",
       "name": "figure-collector-backend",
       "description": "REST API backend service"
     },
