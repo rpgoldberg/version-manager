@@ -124,14 +124,39 @@ const createApp = (versionData) => {
 
   // Service Registry Endpoints
   
-  // Register a new service
+  // Register a new service (requires authentication)
   app.post('/services/register', (req, res) => {
     try {
+      // Check for service authentication token
+      const authHeader = req.headers.authorization;
+      const expectedToken = process.env.SERVICE_AUTH_TOKEN;
+
+      if (!expectedToken) {
+        console.error('[REGISTER] SERVICE_AUTH_TOKEN not configured - registration disabled');
+        return res.status(503).json({
+          error: 'Service registration is not configured'
+        });
+      }
+
+      if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return res.status(401).json({
+          error: 'Missing or invalid authorization header'
+        });
+      }
+
+      const providedToken = authHeader.substring(7); // Remove 'Bearer ' prefix
+      if (providedToken !== expectedToken) {
+        return res.status(401).json({
+          error: 'Invalid service authentication token'
+        });
+      }
+
+      // Token is valid, proceed with registration
       const { serviceId, name, version, endpoints, dependencies } = req.body;
-      
+
       if (!serviceId || !name || !version) {
-        return res.status(400).json({ 
-          error: 'Missing required fields: serviceId, name, version' 
+        return res.status(400).json({
+          error: 'Missing required fields: serviceId, name, version'
         });
       }
 
@@ -142,6 +167,7 @@ const createApp = (versionData) => {
         dependencies
       });
 
+      console.log(`[REGISTER] Service registered: ${serviceId} v${version}`);
       res.status(201).json({
         message: 'Service registered successfully',
         service
