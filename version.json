@@ -20,6 +20,11 @@
       "version": "2.0.0",
       "name": "page-scraper",
       "description": "Web scraping service with Puppeteer"
+    },
+    "versionManager": {
+      "version": "1.1.0",
+      "name": "figure-collector-version-manager",
+      "description": "Service registry and version compatibility manager"
     }
   },
   "compatibility": {
@@ -28,6 +33,7 @@
         "backend": "1.0.0",
         "frontend": "1.0.0",
         "scraper": "1.0.0",
+        "versionManager": "1.0.0",
         "tested": true,
         "verified": "09-Aug-2025"
       },
@@ -35,6 +41,7 @@
         "backend": "2.0.0",
         "frontend": "2.0.0",
         "scraper": "2.0.0",
+        "versionManager": "1.1.0",
         "tested": false,
         "verified": null
       }
