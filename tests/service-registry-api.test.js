@@ -177,6 +177,7 @@ describe('Service Registry API', () => {
 
         await request(app)
           .post('/services/register')
+          .set('Authorization', 'Bearer test-token')
           .send({
             serviceId: 'frontend',
             name: 'Frontend Service',
