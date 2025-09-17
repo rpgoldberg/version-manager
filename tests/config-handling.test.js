@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const request = require('supertest');
 const { createApp, loadVersionData } = require('../app');
+const os = require('os');
 
 // Mock console methods to avoid noise during tests
 const originalConsole = { ...console };
@@ -21,23 +22,31 @@ afterAll(() => {
 });
 
 describe('Configuration File Handling', () => {
-  const versionPath = path.join(__dirname, '../version.json');
-  let originalVersionData;
+  // Use a temporary test file instead of production version.json
+  const testVersionPath = path.join(os.tmpdir(), `test-version-${Date.now()}.json`);
+  const testFixturePath = path.join(__dirname, 'fixtures/test-version-config.json');
   let app;
 
   beforeEach(() => {
-    // Backup original version.json
-    if (fs.existsSync(versionPath)) {
-      originalVersionData = fs.readFileSync(versionPath, 'utf8');
+    // Set environment variable to use test file
+    process.env.VERSION_JSON_PATH = testVersionPath;
+
+    // Copy test fixture to temp location for this test
+    if (fs.existsSync(testFixturePath)) {
+      const fixtureData = fs.readFileSync(testFixturePath, 'utf8');
+      fs.writeFileSync(testVersionPath, fixtureData);
     }
   });
 
   afterEach(() => {
-    // Restore original version.json
-    if (originalVersionData) {
-      fs.writeFileSync(versionPath, originalVersionData);
+    // Clean up test file
+    if (fs.existsSync(testVersionPath)) {
+      fs.unlinkSync(testVersionPath);
     }
-    
+
+    // Clear environment variable
+    delete process.env.VERSION_JSON_PATH;
+
     // Clear mocks
     jest.clearAllMocks();
   });
@@ -79,7 +88,7 @@ describe('Configuration File Handling', () => {
         }
       };
 
-      fs.writeFileSync(versionPath, JSON.stringify(validConfig, null, 2));
+      fs.writeFileSync(testVersionPath, JSON.stringify(validConfig, null, 2));
       
       expect(() => {
         const versionData = loadVersionData();
@@ -91,7 +100,7 @@ describe('Configuration File Handling', () => {
   describe('Invalid JSON Configuration', () => {
     test('should handle malformed JSON gracefully', () => {
       const malformedJson = '{"application": {"name": "test", invalid json}';
-      fs.writeFileSync(versionPath, malformedJson);
+      fs.writeFileSync(testVersionPath, malformedJson);
       
       expect(() => {
         loadVersionData();
@@ -99,7 +108,7 @@ describe('Configuration File Handling', () => {
     });
 
     test('should handle empty JSON file', () => {
-      fs.writeFileSync(versionPath, '');
+      fs.writeFileSync(testVersionPath, '');
       
       expect(() => {
         loadVersionData();
@@ -108,7 +117,7 @@ describe('Configuration File Handling', () => {
 
     test('should handle JSON with invalid structure', () => {
       const invalidStructure = { invalid: 'structure' };
-      fs.writeFileSync(versionPath, JSON.stringify(invalidStructure));
+      fs.writeFileSync(testVersionPath, JSON.stringify(invalidStructure));
       
       // This should still load but endpoints might fail
       expect(() => {
@@ -121,8 +130,8 @@ describe('Configuration File Handling', () => {
   describe('Missing Configuration File', () => {
     test('should handle missing version.json file', () => {
       // Remove the file
-      if (fs.existsSync(versionPath)) {
-        fs.unlinkSync(versionPath);
+      if (fs.existsSync(testVersionPath)) {
+        fs.unlinkSync(testVersionPath);
       }
       
       expect(() => {
@@ -136,7 +145,7 @@ describe('Configuration File Handling', () => {
       const configWithoutApp = {
         services: { backend: { name: 'test' } }
       };
-      fs.writeFileSync(versionPath, JSON.stringify(configWithoutApp));
+      fs.writeFileSync(testVersionPath, JSON.stringify(configWithoutApp));
       
       const versionData = loadVersionData();
       app = createApp(versionData);
@@ -150,7 +159,7 @@ describe('Configuration File Handling', () => {
       const configWithoutCompatibility = {
         application: { name: 'test', version: '1.0.0' }
       };
-      fs.writeFileSync(versionPath, JSON.stringify(configWithoutCompatibility));
+      fs.writeFileSync(testVersionPath, JSON.stringify(configWithoutCompatibility));
       
       const versionData = loadVersionData();
       app = createApp(versionData);
@@ -168,7 +177,7 @@ describe('Configuration File Handling', () => {
         application: { name: 'test', version: '1.0.0' },
         compatibility: { testedCombinations: [] }
       };
-      fs.writeFileSync(versionPath, JSON.stringify(configWithoutDependencies));
+      fs.writeFileSync(testVersionPath, JSON.stringify(configWithoutDependencies));
       
       const versionData = loadVersionData();
       app = createApp(versionData);
@@ -188,7 +197,7 @@ describe('Configuration File Handling', () => {
         compatibility: {},
         dependencies: {}
       };
-      fs.writeFileSync(versionPath, JSON.stringify(configWithoutTestedCombos));
+      fs.writeFileSync(testVersionPath, JSON.stringify(configWithoutTestedCombos));
       
       const versionData = loadVersionData();
       app = createApp(versionData);
@@ -206,7 +215,7 @@ describe('Configuration File Handling', () => {
     test('should show loaded version data in health check', async () => {
       // Create config that loads but has missing data
       const invalidConfig = { invalid: 'data' };
-      fs.writeFileSync(versionPath, JSON.stringify(invalidConfig));
+      fs.writeFileSync(testVersionPath, JSON.stringify(invalidConfig));
       
       const versionData = loadVersionData();
       app = createApp(versionData);

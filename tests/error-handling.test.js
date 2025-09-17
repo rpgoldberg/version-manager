@@ -1,6 +1,7 @@
 const request = require('supertest');
 const fs = require('fs');
 const path = require('path');
+const os = require('os');
 const { createApp, loadVersionData } = require('../app');
 const testVersionData = require('./fixtures/test-version.json');
 
@@ -19,23 +20,26 @@ afterAll(() => {
 
 describe('Error Handling and Edge Cases', () => {
   let app;
-  const versionPath = path.join(__dirname, '../version.json');
-  let originalVersionData;
+  // Use a temporary test file instead of production version.json
+  const testVersionPath = path.join(os.tmpdir(), `test-version-error-${Date.now()}.json`);
 
   beforeEach(() => {
-    // Backup original version.json
-    if (fs.existsSync(versionPath)) {
-      originalVersionData = fs.readFileSync(versionPath, 'utf8');
-    }
+    // Set environment variable to use test file
+    process.env.VERSION_JSON_PATH = testVersionPath;
+
+    // Create a valid test file for tests that don't modify it
+    const testData = JSON.stringify(testVersionData, null, 2);
+    fs.writeFileSync(testVersionPath, testData);
   });
 
   afterEach(() => {
-    // Restore original version.json
-    if (originalVersionData) {
-      fs.writeFileSync(versionPath, originalVersionData);
+    // Clean up test file
+    if (fs.existsSync(testVersionPath)) {
+      fs.unlinkSync(testVersionPath);
     }
-    
-    // No need to close app in tests
+
+    // Clear environment variable
+    delete process.env.VERSION_JSON_PATH;
   });
 
   describe('Malformed Request Handling', () => {
