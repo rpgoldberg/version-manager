@@ -30,10 +30,10 @@ COPY package*.json ./
 # Using --ignore-scripts for security to prevent execution of npm scripts
 RUN npm ci --only=production --ignore-scripts && npm cache clean --force
 
-# Copy only necessary application files with read-only permissions
+# Copy only necessary application files
 # Explicitly copy required files to avoid including sensitive data
-# Files are owned by root:root with 644 permissions (read-only for non-root)
-COPY --chown=root:root --chmod=644 index.js app.js service-registry.js version.json ./
+# Files are owned by root:root (read-only for non-root)
+COPY --chown=root:root index.js app.js service-registry.js version.json ./
 
 # Set permissions and create writable directories in a single layer
 RUN chmod 755 index.js && \
