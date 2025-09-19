@@ -41,8 +41,8 @@ describe('Version Manager', () => {
 
   describe('Health Check Endpoints', () => {
     beforeEach(() => {
-      const versionData = loadVersionData();
-      app = createApp(versionData);
+      // Use test data instead of calling loadVersionData which reads the real file
+      app = createApp(testVersionData);
     });
 
     test('GET / should return healthy status', async () => {
@@ -255,11 +255,11 @@ describe('Version Manager', () => {
       const mockConsoleLog = jest.spyOn(console, 'log').mockImplementation(() => {});
       const mockListen = jest.fn();
 
-      // Mock the app.listen to prevent server from actually starting
-      const { createApp } = require('../app');
+      // Mock both createApp and loadVersionData to prevent file system access
       jest.doMock('../app', () => ({
         ...jest.requireActual('../app'),
-        createApp: () => ({ listen: mockListen })
+        createApp: () => ({ listen: mockListen }),
+        loadVersionData: () => testVersionData
       }));
 
       // Remove existing listeners to avoid conflicts
