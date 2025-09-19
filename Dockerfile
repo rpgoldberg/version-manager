@@ -1,4 +1,4 @@
-FROM node:18-alpine
+FROM node:20-alpine
 
 WORKDIR /app
 
@@ -11,6 +11,7 @@ RUN npm install --only=production && \
 
 # Copy application code
 COPY index.js app.js service-registry.js ./
+COPY utils ./utils/
 
 # Copy version.json (should be copied into version-manager directory before build)
 COPY version.json ./
