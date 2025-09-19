@@ -30,11 +30,11 @@ jobs:
   build-and-push:
     runs-on: ubuntu-latest
     permissions:
+      contents: read
+      packages: write
     outputs:
       tags: ${{ steps.meta.outputs.tags }}
       digest: ${{ steps.build.outputs.digest }}
-      contents: read
-      packages: write
 
     steps:
       - name: Checkout code
@@ -107,7 +107,6 @@ jobs:
   pr-security-scan:
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
-    needs: build-and-push
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
