@@ -1,15 +1,12 @@
 # Build stage - install dependencies
-FROM node:20-alpine AS builder
+FROM node:22-alpine AS builder
 WORKDIR /app
 COPY package*.json ./
 RUN npm ci --omit=dev --ignore-scripts
 
 # Production stage - minimal image
-FROM node:20-alpine
+FROM node:22-alpine
 WORKDIR /app
-
-# Update npm to latest version to fix cross-spawn vulnerability
-RUN npm install -g npm@latest
 
 # Update Alpine packages for security
 RUN apk update && apk upgrade && rm -rf /var/cache/apk/*
