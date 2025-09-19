@@ -5,11 +5,10 @@ WORKDIR /app
 # Copy package files
 COPY package*.json ./
 
-# Install dependencies and curl for health checks
-RUN npm install --only=production && \
+# Install dependencies (with cache bust for security updates)
+RUN npm install --only=production && npm cache clean --force && \
     apk update && \
-    apk upgrade && \
-    apk add --no-cache curl
+    apk upgrade
 
 # Copy application code
 COPY index.js app.js service-registry.js ./
