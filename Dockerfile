@@ -1,23 +1,28 @@
-FROM node:18-alpine
+# Build stage - install dependencies
+FROM node:22-alpine AS builder
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --omit=dev --ignore-scripts
 
+# Production stage - minimal image
+FROM node:22-alpine
 WORKDIR /app
 
-# Copy package files
-COPY package*.json ./
+# Update Alpine packages for security
+RUN apk update && apk upgrade && rm -rf /var/cache/apk/*
 
-# Install dependencies and curl for health checks
-RUN npm install --only=production && \
-    apk add --no-cache curl
+# Copy only production node_modules from builder
+COPY --from=builder /app/node_modules ./node_modules
 
 # Copy application code
+COPY package*.json ./
 COPY index.js app.js service-registry.js ./
-
-# Copy version.json (should be copied into version-manager directory before build)
+COPY utils ./utils/
 COPY version.json ./
 
 # Create non-root user
-RUN addgroup -g 1001 -S nodejs
-RUN adduser -S version-manager -u 1001
+RUN addgroup -g 1001 -S nodejs && \
+    adduser -S version-manager -u 1001
 USER version-manager
 
 # Default port (will be overridden by Docker Compose)

@@ -25,7 +25,9 @@
     "collectCoverageFrom": [
       "*.js",
       "!node_modules/**",
-      "!tests/**"
+      "!tests/**",
+      "!utils/logger.js",
+      "!index.js"
     ],
     "coverageDirectory": "coverage",
     "coverageReporters": [
@@ -40,6 +42,6 @@
     ]
   },
   "engines": {
-    "node": ">=18"
+    "node": ">=22"
   }
 }

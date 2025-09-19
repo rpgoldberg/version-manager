@@ -1,51 +1,58 @@
 {
   "application": {
-    "name": "figure-collector-services",
+    "name": "Figure Collector",
     "version": "2.0.0",
-    "releaseDate": "02-Sep-2025",
-    "description": "Figure collection management application"
+    "releaseDate": "17-Sep-2025",
+    "description": "Figure collection management system"
   },
   "services": {
     "backend": {
-      "version": "1.1.0",
-      "name": "figure-collector-backend",
-      "description": "REST API backend service"
+      "version": "2.0.0",
+      "name": "Figure Collector Backend",
+      "description": "Backend API service"
     },
     "frontend": {
-      "version": "1.0.0",
-      "name": "figure-collector-frontend",
-      "description": "React-based web UI"
+      "version": "2.0.0",
+      "name": "Figure Collector Frontend",
+      "description": "React web interface"
     },
     "scraper": {
-      "version": "1.0.0",
-      "name": "page-scraper",
-      "description": "Web scraping service with Puppeteer"
+      "version": "2.0.0",
+      "name": "Page Scraper",
+      "description": "Web scraping service"
+    },
+    "version-manager": {
+      "version": "1.1.0",
+      "name": "Version Manager",
+      "description": "Service version coordination"
     }
   },
   "compatibility": {
     "testedCombinations": [
       {
-        "backend": "1.0.0",
-        "frontend": "1.0.0",
-        "scraper": "1.0.0",
+        "backend": "2.0.0",
+        "frontend": "2.0.0",
+        "scraper": "2.0.0",
+        "version-manager": "1.1.0",
         "tested": true,
-        "verified": "09-Aug-2025"
+        "verified": "17-Sep-2025"
       },
       {
         "backend": "1.1.0",
-        "frontend": "1.0.0",
-        "scraper": "1.0.0",
+        "frontend": "1.1.0",
+        "scraper": "1.1.0",
+        "version-manager": "1.0.0",
         "tested": true,
-        "verified": "02-Sep-2025"
+        "verified": "09-Aug-2025"
       }
     ]
   },
   "dependencies": {
     "backend": {
-      "scraper": "^1.0.0"
+      "scraper": "^2.0.0"
     },
     "frontend": {
-      "backend": "^1.1.0"
+      "backend": "^2.0.0"
     }
   }
 }

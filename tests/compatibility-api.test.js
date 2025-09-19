@@ -24,10 +24,13 @@ describe('Compatibility API', () => {
   };
 
   beforeEach(async () => {
+    // Set up auth token for testing
+    process.env.SERVICE_AUTH_TOKEN = 'test-token';
     app = createApp(mockVersionData);
-    
+
     await request(app)
       .post('/services/register')
+      .set('Authorization', 'Bearer test-token')
       .send({
         serviceId: 'backend',
         name: 'Backend Service',
@@ -36,6 +39,7 @@ describe('Compatibility API', () => {
 
     await request(app)
       .post('/services/register')
+      .set('Authorization', 'Bearer test-token')
       .send({
         serviceId: 'frontend',
         name: 'Frontend Service',
@@ -44,11 +48,17 @@ describe('Compatibility API', () => {
 
     await request(app)
       .post('/services/register')
+      .set('Authorization', 'Bearer test-token')
       .send({
         serviceId: 'scraper',
         name: 'Scraper Service',
         version: '0.5.0'
       });
+  });
+
+  afterEach(() => {
+    // Clean up environment
+    delete process.env.SERVICE_AUTH_TOKEN;
   });
 
   describe('GET /compatibility/validate', () => {

@@ -17,7 +17,7 @@ describe('Service Registry API', () => {
         testedDate: '2024-01-01'
       },
       'backend:scraper': {
-        versionRangeA: '>=1.0.0', 
+        versionRangeA: '>=1.0.0',
         versionRangeB: '>=0.5.0',
         tested: false
       }
@@ -25,7 +25,14 @@ describe('Service Registry API', () => {
   };
 
   beforeEach(() => {
+    // Set SERVICE_AUTH_TOKEN for testing
+    process.env.SERVICE_AUTH_TOKEN = 'test-token';
     app = createApp(mockVersionData);
+  });
+
+  afterEach(() => {
+    // Clean up environment
+    delete process.env.SERVICE_AUTH_TOKEN;
   });
 
   describe('Service Registration', () => {
@@ -41,6 +48,7 @@ describe('Service Registry API', () => {
 
         const response = await request(app)
           .post('/services/register')
+          .set('Authorization', 'Bearer test-token')
           .send(serviceData)
           .expect(201);
 
@@ -59,6 +67,7 @@ describe('Service Registry API', () => {
 
         const response = await request(app)
           .post('/services/register')
+          .set('Authorization', 'Bearer test-token')
           .send(incompleteData)
           .expect(400);
 
@@ -74,10 +83,42 @@ describe('Service Registry API', () => {
 
         const response = await request(app)
           .post('/services/register')
+          .set('Authorization', 'Bearer test-token')
           .send(invalidData)
           .expect(400);
 
         expect(response.body.error).toContain('Invalid semantic version');
+      });
+
+      it('should reject registration without authentication token', async () => {
+        const serviceData = {
+          serviceId: 'backend',
+          name: 'Backend Service',
+          version: '1.0.0'
+        };
+
+        const response = await request(app)
+          .post('/services/register')
+          .send(serviceData)
+          .expect(401);
+
+        expect(response.body.error).toBe('Missing or invalid authorization header');
+      });
+
+      it('should reject registration with invalid authentication token', async () => {
+        const serviceData = {
+          serviceId: 'backend',
+          name: 'Backend Service',
+          version: '1.0.0'
+        };
+
+        const response = await request(app)
+          .post('/services/register')
+          .set('Authorization', 'Bearer wrong-token')
+          .send(serviceData)
+          .expect(401);
+
+        expect(response.body.error).toBe('Invalid service authentication token');
       });
     });
 
@@ -85,6 +126,7 @@ describe('Service Registry API', () => {
       beforeEach(async () => {
         await request(app)
           .post('/services/register')
+          .set('Authorization', 'Bearer test-token')
           .send({
             serviceId: 'backend',
             name: 'Backend Service',
@@ -126,6 +168,7 @@ describe('Service Registry API', () => {
       it('should return all registered services', async () => {
         await request(app)
           .post('/services/register')
+          .set('Authorization', 'Bearer test-token')
           .send({
             serviceId: 'backend',
             name: 'Backend Service',
@@ -134,6 +177,7 @@ describe('Service Registry API', () => {
 
         await request(app)
           .post('/services/register')
+          .set('Authorization', 'Bearer test-token')
           .send({
             serviceId: 'frontend',
             name: 'Frontend Service',
@@ -155,6 +199,7 @@ describe('Service Registry API', () => {
       beforeEach(async () => {
         await request(app)
           .post('/services/register')
+          .set('Authorization', 'Bearer test-token')
           .send({
             serviceId: 'backend',
             name: 'Backend Service',
@@ -185,6 +230,7 @@ describe('Service Registry API', () => {
       beforeEach(async () => {
         await request(app)
           .post('/services/register')
+          .set('Authorization', 'Bearer test-token')
           .send({
             serviceId: 'backend',
             name: 'Backend Service',
