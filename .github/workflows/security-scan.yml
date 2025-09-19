@@ -46,10 +46,11 @@ jobs:
           ignore-unfixed: true
           exit-code: '1'
 
-  # Scan Docker images for vulnerabilities
+  # Scan Docker images for vulnerabilities (skip on PRs since docker-publish.yml handles that)
   container-scan:
     name: Container Image Scan
     runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request'
     steps:
       - name: Checkout code
         uses: actions/checkout@v4

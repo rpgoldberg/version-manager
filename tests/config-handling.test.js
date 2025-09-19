@@ -128,15 +128,15 @@ describe('Configuration File Handling', () => {
   });
 
   describe('Missing Configuration File', () => {
-    test('should handle missing version.json file', () => {
+    test('should throw ENOENT error for missing version.json file', () => {
       // Remove the file
       if (fs.existsSync(testVersionPath)) {
         fs.unlinkSync(testVersionPath);
       }
-      
+
       expect(() => {
         loadVersionData();
-      }).toThrow();
+      }).toThrow(expect.objectContaining({ code: 'ENOENT' }));
     });
   });
 

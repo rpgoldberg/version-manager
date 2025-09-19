@@ -7,6 +7,8 @@ COPY package*.json ./
 
 # Install dependencies and curl for health checks
 RUN npm install --only=production && \
+    apk update && \
+    apk upgrade && \
     apk add --no-cache curl
 
 # Copy application code

@@ -3,6 +3,7 @@ const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
 const semver = require('semver');
+const crypto = require('crypto');
 const ServiceRegistry = require('./service-registry');
 
 // Create Express app
@@ -145,7 +146,11 @@ const createApp = (versionData) => {
       }
 
       const providedToken = authHeader.substring(7); // Remove 'Bearer ' prefix
-      if (providedToken !== expectedToken) {
+
+      const providedTokenBuffer = Buffer.from(providedToken, 'utf8');
+      const expectedTokenBuffer = Buffer.from(expectedToken, 'utf8');
+
+      if (providedTokenBuffer.length !== expectedTokenBuffer.length || !crypto.timingSafeEqual(providedTokenBuffer, expectedTokenBuffer)) {
         return res.status(401).json({
           error: 'Invalid service authentication token'
         });
