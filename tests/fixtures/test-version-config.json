@@ -1,0 +1,44 @@
+{
+  "application": {
+    "name": "Test App Config",
+    "version": "1.0.0",
+    "releaseDate": "01-Jan-2024",
+    "description": "Test configuration for config-handling tests"
+  },
+  "services": {
+    "backend": {
+      "version": "1.0.0",
+      "name": "test-backend",
+      "description": "Test backend service"
+    },
+    "frontend": {
+      "version": "1.0.0",
+      "name": "test-frontend",
+      "description": "Test frontend service"
+    },
+    "scraper": {
+      "version": "1.0.0",
+      "name": "test-scraper",
+      "description": "Test scraper service"
+    }
+  },
+  "compatibility": {
+    "testedCombinations": [
+      {
+        "backend": "1.0.0",
+        "frontend": "1.0.0",
+        "scraper": "1.0.0",
+        "tested": true,
+        "verified": "01-Jan-2024"
+      }
+    ]
+  },
+  "dependencies": {
+    "backend": {
+      "scraper": "^1.0.0"
+    },
+    "frontend": {
+      "backend": "^1.0.0"
+    }
+  }
+}
