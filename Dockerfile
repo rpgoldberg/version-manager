@@ -5,7 +5,7 @@ COPY package*.json ./
 RUN npm ci --omit=dev --ignore-scripts
 
 # Production stage - minimal image
-FROM node:22-alpine
+FROM node:22-alpine AS production
 WORKDIR /app
 
 # Update Alpine packages for security
