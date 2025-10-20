@@ -20,7 +20,7 @@ jobs:
           fetch-depth: 0  # Shallow clones disabled for better analysis
 
       - name: Setup Node.js
-        uses: actions/setup-node@13427813f706a0f6c9b74603b31103c40ab1c35a # v4
+        uses: actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903 # v4
         with:
           node-version: '20'
           cache: 'npm'
@@ -32,7 +32,7 @@ jobs:
         run: npm test -- --coverage --coverageReporters=lcov
       
       - name: SonarCloud Scan
-        uses: SonarSource/sonarqube-scan-action@9bf7c126a1c17f11278a5c55416b867a27a73d5e # master
+        uses: SonarSource/sonarqube-scan-action@40f5b61913e891f9d316696628698051136015be # master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
