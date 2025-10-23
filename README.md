@@ -178,21 +178,32 @@ npm test
 
 ## Docker Deployment
 
-The service uses a multi-stage Dockerfile with optimized production builds:
+The service uses a multi-stage Dockerfile with optimized builds for different environments:
 
 ```bash
+# Test stage - runs npm test and exits
+docker build --target=test -t version-manager:test .
+docker run version-manager:test  # Runs test suite in container
+
 # Production (default)
-docker build -t version-manager:prod .
+docker build --target=production -t version-manager:prod .
 docker run -p 3001:3001 -e PORT=3001 version-manager:prod  # Production port
 docker run -p 3011:3011 -e PORT=3011 version-manager:prod  # Testing port
 docker run -p 3006:3006 -e PORT=3006 version-manager:prod  # Development port
 ```
 
 **Available stages:**
-- `builder`: Installs production dependencies
+- `builder`: Installs production dependencies only
+- `test`: Includes dev dependencies, runs npm test (for CI/CD validation)
 - `production`: Optimized Alpine image with only runtime requirements (default)
 
-**Note**: Version-manager is JavaScript-only (no TypeScript compilation needed), so the Dockerfile is simpler than other services. All environments (dev/test/prod) use the same production stage and configure behavior via environment variables.
+**Stage Usage:**
+- **test**: Used by CI/CD pipelines and integration tests to validate the service builds correctly and all tests pass
+- **production**: Used for runtime deployment in all environments (dev/test/prod)
+
+**Node Version:** Node.js 25 (Alpine-based images for minimal footprint)
+
+**Note**: Version-manager is JavaScript-only (no TypeScript compilation needed), so the Dockerfile is simpler than other services. Runtime environments configure behavior via environment variables.
 
 ## Integration
 
