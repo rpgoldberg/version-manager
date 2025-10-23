@@ -4,6 +4,22 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm ci --omit=dev --ignore-scripts
 
+# Test stage - for running tests
+FROM node:25-alpine AS test
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+
+# Install all dependencies (including dev dependencies for testing)
+RUN npm ci
+
+# Copy source code
+COPY . .
+
+# Run tests
+CMD ["npm", "test"]
+
 # Production stage - minimal image
 FROM node:25-alpine AS production
 WORKDIR /app
