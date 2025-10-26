@@ -1,58 +1,99 @@
 {
   "application": {
-    "name": "Figure Collector",
-    "version": "2.0.0",
-    "releaseDate": "19-Sep-2025",
-    "description": "Figure collection management system"
+    "name": "figure-collector-services",
+    "version": "2.0.1",
+    "releaseDate": "26-Oct-2025",
+    "description": "Figure collection management application"
   },
   "services": {
     "backend": {
-      "version": "2.0.0",
-      "name": "Figure Collector Backend",
-      "description": "Backend API service"
+      "name": "figure-collector-backend",
+      "version": "2.0.1",
+      "repository": "figure-collector-backend",
+      "dockerImage": "backend:v2.0.1",
+      "ownedBy": "figure-collector",
+      "coupledWith": [
+        "frontend"
+      ]
     },
     "frontend": {
-      "version": "2.0.0",
-      "name": "Figure Collector Frontend",
-      "description": "React web interface"
+      "name": "figure-collector-frontend",
+      "version": "2.0.1",
+      "repository": "figure-collector-frontend",
+      "dockerImage": "frontend:v2.0.1",
+      "ownedBy": "figure-collector",
+      "coupledWith": [
+        "backend"
+      ]
     },
     "scraper": {
-      "version": "2.0.0",
-      "name": "Page Scraper",
-      "description": "Web scraping service"
+      "name": "page-scraper",
+      "version": "2.0.1",
+      "repository": "page-scraper",
+      "dockerImage": "scraper:v2.0.1",
+      "ownedBy": "platform",
+      "coupledWith": [],
+      "standalone": true,
+      "description": "Generic web scraping service"
+    },
+    "infrastructure": {
+      "name": "figure-collector-infra",
+      "version": "2.0.1",
+      "repository": "figure-collector-infra",
+      "ownedBy": "figure-collector",
+      "dockerImage": "infrastructure:v2.0.1"
     },
     "version-manager": {
-      "version": "1.1.0",
-      "name": "Version Manager",
-      "description": "Service version coordination"
+      "name": "version-manager",
+      "version": "1.1.1",
+      "repository": "version-manager",
+      "dockerImage": "version-manager:v1.1.1",
+      "ownedBy": "platform",
+      "coupledWith": []
+    },
+    "integration_tests": {
+      "name": "integration_tests",
+      "version": "1.0.1",
+      "repository": "integration_tests",
+      "dockerImage": "integration_tests:v1.0.1",
+      "ownedBy": "platform",
+      "coupledWith": []
+    }
+  },
+  "dependencies": {
+    "backend": {
+      "scraper": "^2.0.1"
+    },
+    "frontend": {
+      "backend": "^2.0.1"
     }
   },
   "compatibility": {
     "testedCombinations": [
       {
-        "backend": "2.0.0",
-        "frontend": "2.0.0",
-        "scraper": "2.0.0",
-        "version-manager": "1.1.0",
-        "tested": true,
-        "verified": "19-Sep-2025"
+        "backend": "1.0.0",
+        "frontend": "1.0.0",
+        "scraper": "1.0.0",
+        "verified": "09-Aug-2025"
       },
       {
         "backend": "1.1.0",
         "frontend": "1.1.0",
         "scraper": "1.1.0",
-        "version-manager": "1.0.0",
-        "tested": true,
-        "verified": "09-Aug-2025"
+        "verified": "01-Sep-2025"
+      },
+      {
+        "backend": "2.0.0",
+        "frontend": "2.0.0",
+        "scraper": "2.0.0",
+        "verified": "26-Oct-2025"
+      },
+      {
+        "backend": "2.0.1",
+        "frontend": "2.0.1",
+        "scraper": "2.0.1",
+        "verified": "26-Oct-2025"
       }
     ]
-  },
-  "dependencies": {
-    "backend": {
-      "scraper": "^2.0.0"
-    },
-    "frontend": {
-      "backend": "^2.0.0"
-    }
   }
 }
