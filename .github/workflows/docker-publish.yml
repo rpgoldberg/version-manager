@@ -62,6 +62,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@ff7abcd0c3c05ccf6adc123a8cd1fd4fb30fb493 # v4
 
+      - name: Read service version from version.json
+        id: service-version
+        run: |
+          SERVICE_VERSION=$(node -pe "require('./version.json').services['version-manager'].version")
+          echo "version=$SERVICE_VERSION" >> $GITHUB_OUTPUT
+          echo "Service version: $SERVICE_VERSION"
+
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef # v3
         with:
@@ -81,14 +88,14 @@ jobs:
             # PR tags (pr-123)
             type=ref,event=pr
 
-            # Service version tags (v1.1.1 -> 1.1.1)
-            type=semver,pattern={{version}}
+            # Service version tag (from version.json)
+            # For version-manager: when v2.0.1-application is pushed, reads version.json (1.1.1)
+            # and creates Docker tag 1.1.1
+            type=raw,value=${{ steps.service-version.outputs.version }},enable=${{ contains(github.ref, '-application') }}
 
-            # Application version tags (v2.0.1-application -> 2.0.1-application AND 2.0.1)
-            # When an application tag is pushed, generate BOTH the application tag and service version tag
-            # This ensures the same image has multiple tags without rebuilding
+            # Application version tag (v2.0.1-application -> 2.0.1-application)
+            # Extracts the application version and adds -application suffix
             type=match,pattern=v(.+)-application,group=1,suffix=-application
-            type=match,pattern=v(.+)-application,group=1
 
             # Latest tag for main branch
             type=raw,value=latest,enable={{is_default_branch}}
