@@ -178,36 +178,32 @@ npm test
 
 ## Docker Deployment
 
-### Production Container
-```bash
-# Build Docker image
-docker build -t version-manager .
-
-# Run containers
-docker run -p 3006:3006 -e PORT=3006 version-manager  # Development
-docker run -p 3011:3011 -e PORT=3011 version-manager  # Testing
-docker run -p 3001:3001 -e PORT=3001 version-manager  # Production
-```
-
-### Test Container (Toggleable)
-The test container (`Dockerfile.test`) can run in two modes:
+The service uses a multi-stage Dockerfile with optimized builds for different environments:
 
 ```bash
-# Build test image
-docker build -f Dockerfile.test -t version-manager:test .
+# Test stage - runs npm test and exits
+docker build --target=test -t version-manager:test .
+docker run version-manager:test  # Runs test suite in container
 
-# Mode 1: Run tests (default)
-docker run version-manager:test
-
-# Mode 2: Run as service (for integration testing)
-docker run -e RUN_SERVER=1 -p 3011:3011 version-manager:test
+# Production (default)
+docker build --target=production -t version-manager:prod .
+docker run -p 3001:3001 -e PORT=3001 version-manager:prod  # Production port
+docker run -p 3011:3011 -e PORT=3011 version-manager:prod  # Testing port
+docker run -p 3006:3006 -e PORT=3006 version-manager:prod  # Development port
 ```
 
-**Features:**
-- Default mode runs test suite with coverage
-- Setting `RUN_SERVER=1` starts the service instead
-- Useful for integration testing scenarios
-- Consistent across all services in the stack
+**Available stages:**
+- `builder`: Installs production dependencies only
+- `test`: Includes dev dependencies, runs npm test (for CI/CD validation)
+- `production`: Optimized Alpine image with only runtime requirements (default)
+
+**Stage Usage:**
+- **test**: Used by CI/CD pipelines and integration tests to validate the service builds correctly and all tests pass
+- **production**: Used for runtime deployment in all environments (dev/test/prod)
+
+**Node Version:** Node.js 25 (Alpine-based images for minimal footprint)
+
+**Note**: Version-manager is JavaScript-only (no TypeScript compilation needed), so the Dockerfile is simpler than other services. Runtime environments configure behavior via environment variables.
 
 ## Integration
 
