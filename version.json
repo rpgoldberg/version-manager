@@ -1,16 +1,16 @@
 {
   "application": {
     "name": "figure-collector-services",
-    "version": "2.0.1",
-    "releaseDate": "26-Oct-2025",
+    "version": "2.0.2",
+    "releaseDate": "30-Oct-2025",
     "description": "Figure collection management application"
   },
   "services": {
     "backend": {
       "name": "figure-collector-backend",
-      "version": "2.0.1",
+      "version": "2.0.2",
       "repository": "figure-collector-backend",
-      "dockerImage": "backend:v2.0.1",
+      "dockerImage": "backend:v2.0.2",
       "ownedBy": "figure-collector",
       "coupledWith": [
         "frontend"
@@ -18,9 +18,9 @@
     },
     "frontend": {
       "name": "figure-collector-frontend",
-      "version": "2.0.1",
+      "version": "2.0.2",
       "repository": "figure-collector-frontend",
-      "dockerImage": "frontend:v2.0.1",
+      "dockerImage": "frontend:v2.0.2",
       "ownedBy": "figure-collector",
       "coupledWith": [
         "backend"
@@ -28,9 +28,9 @@
     },
     "scraper": {
       "name": "page-scraper",
-      "version": "2.0.1",
+      "version": "2.0.2",
       "repository": "page-scraper",
-      "dockerImage": "scraper:v2.0.1",
+      "dockerImage": "scraper:v2.0.2",
       "ownedBy": "platform",
       "coupledWith": [],
       "standalone": true,
@@ -38,34 +38,34 @@
     },
     "infrastructure": {
       "name": "figure-collector-infra",
-      "version": "2.0.1",
+      "version": "2.0.2",
       "repository": "figure-collector-infra",
       "ownedBy": "figure-collector",
-      "dockerImage": "infrastructure:v2.0.1"
+      "dockerImage": "infrastructure:v2.0.2"
     },
     "version-manager": {
       "name": "version-manager",
-      "version": "1.1.1",
+      "version": "1.1.2",
       "repository": "version-manager",
-      "dockerImage": "version-manager:v1.1.1",
+      "dockerImage": "version-manager:v1.1.2",
       "ownedBy": "platform",
       "coupledWith": []
     },
     "integration_tests": {
       "name": "integration_tests",
-      "version": "1.0.1",
+      "version": "1.0.2",
       "repository": "integration_tests",
-      "dockerImage": "integration_tests:v1.0.1",
+      "dockerImage": "integration_tests:v1.0.2",
       "ownedBy": "platform",
       "coupledWith": []
     }
   },
   "dependencies": {
     "backend": {
-      "scraper": "^2.0.1"
+      "scraper": "^2.0.2"
     },
     "frontend": {
-      "backend": "^2.0.1"
+      "backend": "^2.0.2"
     }
   },
   "compatibility": {
@@ -93,6 +93,15 @@
         "frontend": "2.0.1",
         "scraper": "2.0.1",
         "verified": "26-Oct-2025"
+      },
+      {
+        "backend": "2.0.2",
+        "frontend": "2.0.2",
+        "scraper": "2.0.2",
+        "version-manager": "1.1.2",
+        "integration-tests": "1.0.2",
+        "verified": "30-Oct-2025",
+        "notes": "Simplified versioning strategy - removed dual-tagging"
       }
     ]
   }
