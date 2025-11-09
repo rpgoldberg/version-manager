@@ -28,9 +28,9 @@
     },
     "scraper": {
       "name": "page-scraper",
-      "version": "2.0.2",
+      "version": "2.0.3",
       "repository": "page-scraper",
-      "dockerImage": "scraper:v2.0.2",
+      "dockerImage": "scraper:v2.0.3",
       "ownedBy": "platform",
       "coupledWith": [],
       "standalone": true,
@@ -45,9 +45,9 @@
     },
     "version-manager": {
       "name": "version-manager",
-      "version": "1.1.2",
+      "version": "1.1.3",
       "repository": "version-manager",
-      "dockerImage": "version-manager:v1.1.2",
+      "dockerImage": "version-manager:v1.1.3",
       "ownedBy": "platform",
       "coupledWith": []
     },
@@ -62,7 +62,7 @@
   },
   "dependencies": {
     "backend": {
-      "scraper": "^2.0.2"
+      "scraper": "^2.0.3"
     },
     "frontend": {
       "backend": "^2.0.2"
@@ -102,6 +102,15 @@
         "integration-tests": "1.0.2",
         "verified": "30-Oct-2025",
         "notes": "Simplified versioning strategy - removed dual-tagging"
+      },
+      {
+        "backend": "2.0.2",
+        "frontend": "2.0.2",
+        "scraper": "2.0.3",
+        "version-manager": "1.1.3",
+        "integration-tests": "1.0.2",
+        "verified": "09-Nov-2025",
+        "notes": "Incremental release: page-scraper performance improvements (6x faster with browser context reuse, NSFW auth, Chrome CVE fixes)"
       }
     ]
   }
