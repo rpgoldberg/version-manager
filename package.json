@@ -22,14 +22,15 @@
   },
   "jest": {
     "testEnvironment": "node",
-    "setupFilesAfterEnv": ["<rootDir>/jest.setup.js"],
+    "testEnvironmentOptions": {
+      "localStorage": null
+    },
     "collectCoverageFrom": [
       "*.js",
       "!node_modules/**",
       "!tests/**",
       "!utils/logger.js",
-      "!index.js",
-      "!jest.setup.js"
+      "!index.js"
     ],
     "coverageDirectory": "coverage",
     "coverageReporters": [
