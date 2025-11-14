@@ -1,11 +1,11 @@
 # Build stage - install dependencies
-FROM node:25-alpine AS builder
+FROM node:22-alpine AS builder
 WORKDIR /app
 COPY package*.json ./
 RUN npm ci --omit=dev --ignore-scripts
 
 # Test stage - for running tests
-FROM node:25-alpine AS test
+FROM node:22-alpine AS test
 WORKDIR /app
 
 # Copy package files
@@ -21,7 +21,7 @@ COPY . .
 CMD ["npm", "test"]
 
 # Production stage - minimal image
-FROM node:25-alpine AS production
+FROM node:22-alpine AS production
 WORKDIR /app
 
 # Update Alpine packages for security

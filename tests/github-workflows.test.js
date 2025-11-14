@@ -20,13 +20,13 @@ describe('GitHub Actions Workflows Configuration', () => {
       buildWorkflow = yaml.load(workflowContent);
     });
 
-    it('should use Node.js 25 to match Dockerfile', () => {
+    it('should use Node.js 22 to match Dockerfile', () => {
       const setupNodeStep = buildWorkflow.jobs.build.steps.find(
         step => step.name === 'Setup Node.js'
       );
 
       expect(setupNodeStep).toBeDefined();
-      expect(setupNodeStep.with['node-version']).toBe('25');
+      expect(setupNodeStep.with['node-version']).toBe('22');
     });
 
     it('should run tests as part of the build', () => {
@@ -124,7 +124,7 @@ describe('GitHub Actions Workflows Configuration', () => {
 
       // Versions should match
       expect(workflowNodeVersion).toBe(dockerfileNodeVersion);
-      expect(dockerfileNodeVersion).toBe('25');
+      expect(dockerfileNodeVersion).toBe('22');
     });
   });
 });

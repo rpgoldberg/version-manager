@@ -21,14 +21,13 @@
     "supertest": "^7.1.4"
   },
   "jest": {
-    "testEnvironment": "<rootDir>/jest-environment-node-no-localstorage.js",
+    "testEnvironment": "node",
     "collectCoverageFrom": [
       "*.js",
       "!node_modules/**",
       "!tests/**",
       "!utils/logger.js",
-      "!index.js",
-      "!jest-environment-node-no-localstorage.js"
+      "!index.js"
     ],
     "coverageDirectory": "coverage",
     "coverageReporters": [
