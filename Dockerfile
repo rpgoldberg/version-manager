@@ -4,7 +4,6 @@ WORKDIR /app
 
 # Setup localStorage directory for Node 25
 RUN mkdir -p /tmp/node-localstorage
-ENV NODE_OPTIONS="--localstorage-file=/tmp/node-localstorage/storage.sqlite"
 
 COPY package*.json ./
 RUN npm ci --omit=dev --ignore-scripts
@@ -15,7 +14,6 @@ WORKDIR /app
 
 # Setup localStorage directory for Node 25
 RUN mkdir -p /tmp/node-localstorage
-ENV NODE_OPTIONS="--localstorage-file=/tmp/node-localstorage/storage.sqlite"
 
 # Copy package files
 COPY package*.json ./
@@ -33,10 +31,9 @@ CMD ["npm", "test"]
 FROM node:25-alpine AS production
 WORKDIR /app
 
-# Setup localStorage directory for Node 25
+# Setup localStorage directory for Node 25 and update packages
 RUN mkdir -p /tmp/node-localstorage && \
     apk update && apk upgrade && rm -rf /var/cache/apk/*
-ENV NODE_OPTIONS="--localstorage-file=/tmp/node-localstorage/storage.sqlite"
 
 # Copy only production node_modules from builder
 COPY --from=builder /app/node_modules ./node_modules
