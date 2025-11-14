@@ -28,7 +28,8 @@
       "!node_modules/**",
       "!tests/**",
       "!utils/logger.js",
-      "!index.js"
+      "!index.js",
+      "!jest.setup.js"
     ],
     "coverageDirectory": "coverage",
     "coverageReporters": [
