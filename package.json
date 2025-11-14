@@ -27,6 +27,7 @@
       "*.js",
       "!node_modules/**",
       "!tests/**",
+      "!scripts/**",
       "!utils/logger.js",
       "!index.js"
     ],
