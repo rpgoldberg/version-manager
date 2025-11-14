@@ -1,12 +1,19 @@
 # Build stage - install dependencies
 FROM node:25-alpine AS builder
 WORKDIR /app
+
+# Setup localStorage directory for Node 25
+RUN mkdir -p /tmp/node-localstorage
+
 COPY package*.json ./
 RUN npm ci --omit=dev --ignore-scripts
 
 # Test stage - for running tests
 FROM node:25-alpine AS test
 WORKDIR /app
+
+# Setup localStorage directory for Node 25
+RUN mkdir -p /tmp/node-localstorage
 
 # Copy package files
 COPY package*.json ./
@@ -24,8 +31,9 @@ CMD ["npm", "test"]
 FROM node:25-alpine AS production
 WORKDIR /app
 
-# Update Alpine packages for security
-RUN apk update && apk upgrade && rm -rf /var/cache/apk/*
+# Setup localStorage directory for Node 25 and update packages
+RUN mkdir -p /tmp/node-localstorage && \
+    apk update && apk upgrade && rm -rf /var/cache/apk/*
 
 # Copy only production node_modules from builder
 COPY --from=builder /app/node_modules ./node_modules
@@ -36,9 +44,10 @@ COPY index.js app.js service-registry.js ./
 COPY utils ./utils/
 COPY version.json ./
 
-# Create non-root user
+# Create non-root user and set ownership of localStorage directory
 RUN addgroup -g 1001 -S nodejs && \
-    adduser -S version-manager -u 1001
+    adduser -S version-manager -u 1001 && \
+    chown -R version-manager:nodejs /tmp/node-localstorage
 USER version-manager
 
 # Default port (will be overridden by Docker Compose)
