@@ -4,6 +4,9 @@ node_modules/
 # Test coverage
 coverage/
 
+# Temporary files and local storage
+.tmp/
+
 # Logs
 *.log
 logs/

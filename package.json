@@ -6,10 +6,11 @@
   "scripts": {
     "start": "node index.js",
     "dev": "node index.js",
-    "test": "jest",
-    "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage",
-    "test:integration": "jest tests/integration"
+    "pretest": "node scripts/prepare-localstorage.js",
+    "test": "NODE_OPTIONS=--localstorage-file=.tmp/localstorage/storage.sqlite jest",
+    "test:watch": "NODE_OPTIONS=--localstorage-file=.tmp/localstorage/storage.sqlite jest --watch",
+    "test:coverage": "NODE_OPTIONS=--localstorage-file=.tmp/localstorage/storage.sqlite jest --coverage",
+    "test:integration": "NODE_OPTIONS=--localstorage-file=.tmp/localstorage/storage.sqlite jest tests/integration"
   },
   "dependencies": {
     "cors": "^2.8.5",
