@@ -2,7 +2,7 @@
   "application": {
     "name": "figure-collector-services",
     "version": "2.1.0",
-    "releaseDate": null,
+    "releaseDate": "15-Nov-2025",
     "description": "Figure collection management application"
   },
   "services": {
